@@ -1,0 +1,52 @@
+<div class="container">
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    Information
+                </div>
+                <div class="card-body">
+                    <marquee behavior="" direction="">
+                       <h3 class="my-4">Notice Board!!!</h3>
+                    </marquee>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8 mt-2">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    Statistics
+                </div>
+                <div class="card-body">
+                   <div class="row">
+                       <div class="col-md-4">
+                           <a class="text-decoration-none text-dark" href="{% url 'dashboard-customer' %}">
+                               <div class="card my-card shadow text-center p-3 mb-2">
+                                   <h4>Customers <i class="fas fa-users"></i> </h4>
+                                   <h3>4</h3>
+                               </div>
+                            </a>
+                       </div>
+                       <div class="col-md-4">
+                        <a class="text-decoration-none text-dark" href="{% url 'dashboard-deposit' %}">
+                            <div class="card my-card shadow text-center p-3 mb-2">
+                                <h4>Deposits <i class="fas fa-box"></i> </h4>
+                                <h3>4</h3>
+                            </div>
+                         </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a class="text-decoration-none text-dark" href="{% url 'dashboard-witdrawal' %}">
+                            <div class="card my-card shadow text-center p-3 mb-2">
+                                <h4>Witdrawals <i class="fas fa-shopping-cart"></i> </h4>
+                                <h3>4</h3>
+                            </div>
+                         </a>
+                    </div>
+                   </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>

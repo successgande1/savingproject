@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block title %} Witdrawal Page {% endblock %}
+
+{% block content %}
+
+{% include 'partials/_topnav.html' %}
+
+<!--Table-->
+
+
+<div class="container">
+    <div class="row my-4">
+        <div class="col-md-4">
+            <div class="border bg-white p-3">
+                <h4>Add Witdrawal</h4>
+                <hr>
+                <form action="" method="POST">
+
+                      <div class="form-group">
+                        <label for="product">Product</label>
+                          <select id="product" class="form-control">
+                            <option selected>Choose...</option>
+                            <option>...</option>
+                          </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="avaliableqty">Avaliable Quantity</label>
+                        <input type="number" class="form-control" id="avaliableqty">
+                      </div>
+                      <div class="form-group">
+                          <label for="sellprice">Selling Price</label>
+                          <input type="text" class="form-control" id="sellprice">
+                      </div>
+                      <div class="form-group">
+                            <label for="quantity">Quantity</label>
+                            <input type="number" class="form-control" id="quantity">
+                      </div>                            
+                    <input class="btn btn-success btn-block" value="Add Sales" type="submit">
+                </form>
+            </div>
+        </div>
+
+        
+        <div class="col-md-8 mt-2">
+            <div class="table-responsive">
+            <table class="table bg-white">
+                <thead class="bg-info text-white">
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Product</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Qty Sold</th>
+                    <th scope="col">Sold Date</th>
+                    <th scope="col">Sold By</th>
+                    <th scope="col">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">1</th>
+                    <td>Laptop</td>
+                    <td>Computers</td>
+                    <td>N120,000</td>
+                    <td>1</td>
+                    <td>12/07/2021</td>
+                    <td>Apollos Gande</td>
+                    <td>
+                        <a class="btn btn-info btn-sm" href="">Receipt</a>
+                    </td>
+                  </tr>                   
+                </tbody>
+              </table>
+            </div>
+        </div>
+        
+    </div>
+
+  
+  
+    
+  </table>
+</div>
+
+
+<!--End Table-->
+
+{% endblock %}
