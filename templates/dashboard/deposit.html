@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% block title %} Deposit Page {% endblock %}
 
+{% load humanize %}
+
 {% block content %}
 
 {% include 'partials/_topnav.html' %}
@@ -37,34 +39,34 @@
                 </form>
             </div>
         </div>
+        
         <div class="col-md-8 mt-2">
             <div class="table-responsive">
                 <table class="table bg-white">
                     <thead class="bg-info text-white">
                     <tr>
                         <th scope="col">#</th>
-                        <th scope="col">Product</th>
-                        <th scope="col">Category</th>
-                        <th scope="col">Price</th>
-                        <th scope="col">Qty Sold</th>
-                        <th scope="col">Sold Date</th>
-                        <th scope="col">Sold By</th>
+                        <th scope="col">Customer</th>
+                        <th scope="col">Staff</th>
+                        <th scope="col">Amount Deposited</th>
+                        <th scope="col">Date Deposited</th>
                         <th scope="col">Action</th>
                     </tr>
                     </thead>
                     <tbody>
+                        {% for deposit in deposits %}
                     <tr>
-                        <th scope="row">1</th>
-                        <td>Laptop</td>
-                        <td>Computers</td>
-                        <td>N120,000</td>
-                        <td>1</td>
-                        <td>12/07/2021</td>
-                        <td>Apollos Gande</td>
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td>{{ deposit.customer}}</td>
+                        <td>{{ deposit.staff }}</td>
+                        <td>N{{ deposit.deposit_amount | intcomma }}</td>
+                        <td>{{ deposit.date | naturalday }}</td>
+                        
                         <td>
                             <a class="btn btn-info btn-sm" href="">Receipt</a>
                         </td>
-                    </tr>                   
+                    </tr>    
+                    {% endfor %}               
                     </tbody>
                 </table>
             </div>

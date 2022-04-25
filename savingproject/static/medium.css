@@ -1,0 +1,16 @@
+@media only screen and (min-width: 768px) {
+
+    .h4, h4 {
+        font-size: 1rem;
+      }
+
+    .dashboard-card{
+        width: 23%;
+        float: left;
+        margin-left: 1.4%;
+
+    }
+
+   
+
+}

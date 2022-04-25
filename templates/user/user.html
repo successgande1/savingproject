@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %} Customers Page {% endblock %}
+{% block title %} Add User Page {% endblock %}
 
 {% load crispy_forms_tags %}
 
@@ -13,16 +13,16 @@
 
       <div class="col-md-4">
         <div class="border bg-white p-3">
-            <h4>Add Customer</h4>
+            <h4>Add User</h4>
             <hr>
-            <form method="POST" enctype="multipart/form-data">
+            <form method="POST">
 
              
               {% csrf_token %}
 
               {{ form |crispy }}
 
-                <input class="btn btn-success btn-block" value="Create Account" type="submit">
+                <input class="btn btn-success btn-block" value="Add User" type="submit">
             </form>
         </div>
     </div>
@@ -32,26 +32,26 @@
                 <thead class="bg-info text-white">
                   <tr>
                     <th scope="col">#</th>
-                    <th scope="col">Acct. No.</th>
-                    <th scope="col">Names</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Email</th>
                     <th scope="col">Phone</th>
                     <th scope="col">Address</th>
+                    
                     <th scope="col">Action</th>
                   </tr>
                 </thead>
-                
                 <tbody>
-                  {% for customer in customers %}
+                  {% for user in all_users %}
                   <tr>
                     <td>{{ forloop.counter }}</td>
-                    <td>{{ customer.accountnumber }}</td>
-                    <td>{{ customer.surname }} {{ customer.othernames }}</td>
-                    <td>{{ customer.phone }}</td>
-                    <td>{{ customer.address }}</td>
+                    <td>{{user.username}}</td>
+                    <td>{{user.email}}</td>
+                    <td>{{user.staff.phone}}</td>
+                    <td>{{user.profile.address}}</td>
                     
-                    <th scope="row"><a class="btn btn-info btn-sm" href="">Deposit</a></th>
+                    <th scope="row"><a class="btn btn-info btn-sm" href="">View Profile</a></th>
                   </tr>
-                  {% endfor %}                 
+                {% endfor %}               
                 </tbody>
               </table>
         </div>

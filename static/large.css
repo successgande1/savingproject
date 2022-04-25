@@ -1,0 +1,8 @@
+/***** OPEN ENDED MEDIA QUERY *****/
+@media only screen and (min-width: 1024px) {
+
+    .h4, h4 {
+        font-size: 1.5rem;
+      }
+
+}

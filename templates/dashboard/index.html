@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
-{% block title %} Home Page {% endblock %}
+{% block title %} Dashboard {% endblock %}
 
 {% block content %}
 
 {% include 'partials/_topnav.html' %}
+
+{% if user.is_authenticated and user.is_staff and user.is_superuser %}
 
  <!--Graphs-->
  <div class="container">
@@ -95,5 +97,7 @@
     </div>
 </div>
 <!--End Graphs-->
+
+{% endif %}
 
 {% endblock %}
