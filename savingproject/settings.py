@@ -142,6 +142,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MEDIA_URL = '/media/'
 
+#MESSAGING
+from django.contrib.messages import constants as messsages
+MESSAGE_TAGS = {
+
+    messsages.ERROR: 'danger'
+}
+
+
 LOGIN_REDIRECT_URL = 'dashboard-index'
 
 LOGIN_URL = 'user-login'

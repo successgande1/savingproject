@@ -8,7 +8,7 @@ from . models import Customer, Deposit, Witdrawal
 
 #Customize the Display of Customer Model in the Admin Backend in a Table Form
 class CustomersAdmin(admin.ModelAdmin):
-    list_display = ('surname', 'othernames', 'accountnumber', 'address', 'phone' )
+    list_display = ('surname', 'othernames', 'account_number', 'address', 'phone' )
     list_filter = ['address'] #List needs no comma at the end but Tuple does ('phone',)
 class DepositAdmin(admin.ModelAdmin):
     list_display = ('customer', 'staff', 'deposit_amount', 'date',)

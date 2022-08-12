@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %} Approve Deposit {% endblock %}
+
+{% load humanize %}
+
+{% block content %}
+<div class="container p-5">
+    <div class="row mt-5">
+        <div class="col-md-6 offset-md-3">
+            <div class="border bg-white p-3">
+                <h3>Deposit Approval</h3>
+                <hr>
+               
+               <div class="alert alert-danger">
+                   
+                   <h5>Deposit N{{ amount }} <span style="color: white; font-weight:bold; font-size:1.3rem; ">for Acct. No:{{ acct }}  </span>?</h5>
+                  
+               </div>
+               
+               <form method="POST">
+                   {% csrf_token %} 
+
+                 
+
+                <a class="btn btn-secondary" href="{% url 'create-deposit' customer.id %}">Cancel</a>
+
+                   <input class="btn btn-danger" type="submit" value="Confirm">
+               </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

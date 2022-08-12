@@ -1,17 +1,8 @@
+{% load humanize %}
+
 <div class="container">
     <div class="row mt-4">
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-header bg-info text-white">
-                    Information
-                </div>
-                <div class="card-body">
-                    <marquee behavior="" direction="">
-                       <h3 class="my-4">Notice Board!!!</h3>
-                    </marquee>
-                </div>
-            </div>
-        </div>
+        
         <div class="col-md-8 mt-2">
             <div class="card">
                 <div class="card-header bg-info text-white">
@@ -31,7 +22,7 @@
                        {% else %}
 
                        <div class="col-md-4 ">
-                        <a class="text-decoration-none text-dark" href="{% url 'dashboard-customer' %}">
+                        <a class="text-decoration-none text-dark" href="{% url 'customers-list' %}">
                             <div class="card my-card shadow text-center p-3 mb-2">
                                 <h4>Customers <i class="fas fa-users"></i> </h4>
                                 <h3>{{ count_accounts }}</h3>
@@ -42,10 +33,21 @@
 
                        {% endif %}
                        <div class="col-md-4">
-                        <a class="text-decoration-none text-dark" href="{% url 'dashboard-deposit' %}">
+                        <a class="text-decoration-none text-dark" href="">
                             <div class="card my-card shadow text-center p-3 mb-2">
                                 <h4>Deposits Today <i class="fas fa-box"></i> </h4>
-                                <h3>{{ count_deposits_today }}</h3>
+                                <h3>
+                                    {% if user.is_authenticated and user.is_staff and user.is_superuser %}
+
+                                    N{{ total_deposit | intcomma  }}
+
+                                    {% else %}
+
+                                    {{ count_deposits_today }}
+
+                                    {% endif %}
+                                
+                                </h3>
                             </div>
                          </a>
                     </div>
@@ -53,11 +55,34 @@
                         <a class="text-decoration-none text-dark" href="{% url 'dashboard-witdrawal' %}">
                             <div class="card my-card shadow text-center p-3 mb-2">
                                 <h4>Witdrawals Today <i class="fas fa-shopping-cart"></i> </h4>
-                                <h3>{{ count_withdrawals_today }}</h3>
+                                <h3>
+                                    {% if user.is_authenticated and user.is_staff and user.is_superuser %}
+
+                                    N{{ total_withdrawal | intcomma  }}
+
+                                    {% else %}
+
+                                    {{ count_withdrawals_today }}
+
+                                    {% endif %}
+                                
+                                </h3>
                             </div>
                          </a>
                     </div>
                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    Information
+                </div>
+                <div class="card-body">
+                    <marquee behavior="" direction="">
+                       <h3 class="my-4">Notice Board!!!</h3>
+                    </marquee>
                 </div>
             </div>
         </div>

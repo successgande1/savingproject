@@ -9,23 +9,10 @@
 
  <!--Table-->
  <div class="container">
+ 
+  
+    {% include 'partials/_alerts.html' %}
     <div class="row my-4">
-
-      <div class="col-md-4">
-        <div class="border bg-white p-3">
-            <h4>Add Customer</h4>
-            <hr>
-            <form method="POST" enctype="multipart/form-data">
-
-             
-              {% csrf_token %}
-
-              {{ form |crispy }}
-
-                <input class="btn btn-success btn-block" value="Create Account" type="submit">
-            </form>
-        </div>
-    </div>
 
         <div class="col-md-8">
             <table class="table bg-white">
@@ -35,27 +22,49 @@
                     <th scope="col">Acct. No.</th>
                     <th scope="col">Names</th>
                     <th scope="col">Phone</th>
-                    <th scope="col">Address</th>
+                    <th scope="col">Total Saved</th>
                     <th scope="col">Action</th>
                   </tr>
                 </thead>
-                
+                {% if customers %}
                 <tbody>
+                
+                  
                   {% for customer in customers %}
                   <tr>
                     <td>{{ forloop.counter }}</td>
-                    <td>{{ customer.accountnumber }}</td>
+                    <td>{{ customer.account_number }}</td>
                     <td>{{ customer.surname }} {{ customer.othernames }}</td>
                     <td>{{ customer.phone }}</td>
                     <td>{{ customer.address }}</td>
                     
-                    <th scope="row"><a class="btn btn-info btn-sm" href="">Deposit</a></th>
+                    <th scope="row"><a class="btn btn-info btn-sm" href="{% url 'create-deposit' customer.id %}">Deposit</a></th>
                   </tr>
-                  {% endfor %}                 
+                  {% endfor %}  
+                             
                 </tbody>
+                {% else %}
+                <h1>No Customer Found</h1>
+                {% endif %}
               </table>
         </div>
+
+        <div class="col-md-4">
+          <div class="border bg-white p-3">
+              <h4>Open Account</h4>
+              <hr>
+              <form action="" method="POST">
+                {% csrf_token %}
+
+                {{form | crispy }}
+
+                <input type="submit" class="btn btn-success" value="Create Account">
+
+              </form>
+          </div>
+       </div>
     </div>
+
 
   
   

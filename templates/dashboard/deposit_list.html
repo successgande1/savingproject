@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %} Deposit List {% endblock %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+{% include 'partials/_topnav.html' %}
+
+ <!--Table-->
+ <div class="container">
+ 
+  
+    {% include 'partials/_alerts.html' %}
+    <div class="row my-4">
+
+      <div class="col-md-4">
+        <div class="border bg-white p-3">
+            <h4>Add Customer</h4>
+            <hr>
+           
+
+             
+                <a class="btn btn-success btn-block" href="{% url 'customer_create' %}">Create Account</a>
+
+               
+           
+        </div>
+    </div>
+
+        <div class="col-md-8">
+            <table class="table bg-white">
+                <thead class="bg-info text-white">
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Acct. No.</th>
+                    <th scope="col">Names</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Action</th>
+                  </tr>
+                </thead>
+                
+                <tbody>
+                
+                  
+                  {% for deposit in deposits %}
+                  <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ deposit.customer.accountnumber }}</td>
+                    <td>{{ deposit.customer.surname }} {{ deposit.customer.othernames }}</td>
+                    <td>{{ deposit.deposit_amount }}</td>
+                    <td>{{ deposit.date }}</td>
+                    
+                    <th scope="row"><a class="btn btn-info btn-sm" href=" ">Deposit</a></th>
+                  </tr>
+                  {% endfor %}  
+                             
+                </tbody>
+              </table>
+        </div>
+    </div>
+
+
+  
+  
+    
+  </table>
+</div>
+<!--End Table-->
+
+{% endblock %}
