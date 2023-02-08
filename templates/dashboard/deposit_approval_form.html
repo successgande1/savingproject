@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %} Approve Deposit {% endblock %}
+{% block title %} {{page_title}} {% endblock %}
 
 {% load humanize %}
 
@@ -9,7 +9,7 @@
     <div class="row mt-5">
         <div class="col-md-6 offset-md-3">
             <div class="border bg-white p-3">
-                <h3>Deposit Approval</h3>
+                <h3>{{page_title}}</h3>
                 <hr>
                
                <div class="alert alert-danger">
@@ -18,10 +18,10 @@
                   
                </div>
                
-               <form method="POST">
+               <form method="POST" action="{% url 'approve-deposit' customer.id  %}">
                    {% csrf_token %} 
 
-                 
+                 <!-- {{ form }} -->
 
                 <a class="btn btn-secondary" href="{% url 'create-deposit' customer.id %}">Cancel</a>
 

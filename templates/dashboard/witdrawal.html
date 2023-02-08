@@ -1,90 +1,100 @@
 {% extends 'base.html' %}
-{% block title %} Witdrawal Page {% endblock %}
+{% block title %} {{page_title}} {% endblock %}
+
+{% load crispy_forms_tags %}
 
 {% load humanize %}
 
 {% block content %}
 
-{% include 'partials/_topnav.html' %}
-
-<!--Table-->
-
+{% include 'partials/_topnav.html' %} 
 
 <div class="container">
-    <div class="row my-4">
-        <div class="col-md-4">
-            <div class="border bg-white p-3">
-                <h4>Add Witdrawal</h4>
-                <hr>
-                <form action="" method="POST">
 
-                      <div class="form-group">
-                        <label for="product">Product</label>
-                          <select id="product" class="form-control">
-                            <option selected>Choose...</option>
-                            <option>...</option>
-                          </select>
-                      </div>
-                      <div class="form-group">
-                        <label for="avaliableqty">Avaliable Quantity</label>
-                        <input type="number" class="form-control" id="avaliableqty">
-                      </div>
-                      <div class="form-group">
-                          <label for="sellprice">Selling Price</label>
-                          <input type="text" class="form-control" id="sellprice">
-                      </div>
-                      <div class="form-group">
-                            <label for="quantity">Quantity</label>
-                            <input type="number" class="form-control" id="quantity">
-                      </div>                            
-                    <input class="btn btn-success btn-block" value="Add Sales" type="submit">
-                </form>
-            </div>
-        </div>
+  {% include 'partials/_alerts.html' %}
+
+    <div class="row my-4">
 
         
-        <div class="col-md-8 mt-2">
-            <div class="table-responsive">
-            <table class="table bg-white">
-                <thead class="bg-info text-white">
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Account</th>
-                    <th scope="col">Done By</th>
-                    <th scope="col">Amount </th>
-                    <th scope="col">Date </th>
-                    
-                    <th scope="col">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for withdrawal in withdrawals %}
-                  <tr>
-                    <th scope="row">{{ forloop.counter }}</th>
-                    <td>{{ withdrawal.account }}</td>
-                    <td>{{ withdrawal.staff }}</td>
-                    <td>N{{ withdrawal.withdrawal_amount | intcomma }}</td>
-                    <td>{{ withdrawal.date | naturalday }}</td>
-                    
-                    <td>
-                        <a class="btn btn-info btn-sm" href="">Receipt</a>
-                    </td>
-                  </tr>  
-                  {% endfor %}                 
-                </tbody>
-              </table>
-            </div>
+        <div class="col-md-8">
+           <div class="card">
+               <div class="card-header bg-info text-white">
+                {{ customer.surname }} {{ customer.othernames }} Savings Summary
+               </div>
+               <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <span class="h4">Mini Account Statement</span><a class="btn btn-info btn-sm float-right" href="  ">Acct. Statment</a>
+                        <hr>
+                        <table class="table bg-white table-borderless mb-1">
+                            <tbody>
+                              <tr>
+                                <th scope="row">Today's Date: </th>
+                                <td>{{ current_date }}</td>                                   
+                              </tr> 
+                              <tr>
+                                <th scope="row">Account Number: </th>
+                                <td style="font-family: san serif; color:rgb(6, 82, 189); font-size:1.2rem;">{{ customer.account_number}}</td>
+                              </tr>   
+                              <tr>
+                                <th scope="row">Total Deposited: <b style="color:red;"> {{current_date.year}}</b> </th>
+                                <td>N{{ deposited_this_month |intcomma }}</td>                                   
+                              </tr>  
+                              <tr>
+                                <th scope="row">Service Charge [Monthly]:</th>
+                                <td style="font-family: san serif; color:red; font-size:1.2rem;">N{{saving_charge_amount}}</td>                                   
+                              </tr>
+                              <tr>
+                                <th scope="row">Total Withdrawn: <b style="color:red;"> {{current_date.year}}</b> </th>
+                                <td>N{{ customer_withdrawals |intcomma }}</td>                                   
+                              </tr> 
+                              <!-- <tr>
+                                <th scope="row">Account Balance:</th>
+                                <td style="font-family: san serif; color:red; font-size:1.2rem;">N{{ acct_balance |intcomma }}</td>                                   
+                              </tr>   -->
+                        
+
+                              <tr>
+                                <th scope="row">Available Balance:</th>
+                                <td style="font-family: san serif; color:rgb(6, 82, 189); font-size:1.2rem;">N{{ available_balance |intcomma  }}</td>                                   
+                              </tr>  
+                               
+                              
+                                            
+                            </tbody>
+                          </table>
+                    </div>
+                    <div class="col-md-4">
+                        <img class="img-thumbnail" src="{{ user.profile.image.url }}" alt="user-image">
+                    </div>
+                </div>
+               </div>
+           </div>
         </div>
+        <div class="col-md-4">
+            <div class="border bg-white p-3">
+                <h4>Add Withdrawal</h4>
+                <hr>
+                {% if available_balance > saving_charge_amount %}
+                <form action="" method="POST">
+                  {% csrf_token %}
+  
+                  {{form | crispy }}
+  
+                  <input type="submit" class="btn btn-success" value="Withdraw">
+  
+                </form>
+                {% else %}
+                <h3 style="color:red; text-align:center;">Insufficient Fund</h3>
+                <a class="btn btn-success" href=" {% url 'create-deposit' customer.id %} ">Add Fund</a>
+                {% endif %}
+            </div>
+         </div>
         
     </div>
 
-  
-  
     
-  </table>
+  
 </div>
-
-
-<!--End Table-->
 
 {% endblock %}

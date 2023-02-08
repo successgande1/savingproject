@@ -27,38 +27,38 @@
                             <th scope="col">Action</th>
                           </tr>
                         </thead>
-                        {% if customer_deposits %}
+                        {% if customer_withdrawals %}
                         <tbody>
                         
                           
-                          {% for deposit in customer_deposits %}
+                          {% for withdrawal in customer_withdrawals %}
                           <tr>
-                            <td>{{ forloop.counter }}</td> 
-                            <td>{{ deposit.acct }}</td>
-                            <td>{{ deposit.customer.phone }}</td> 
-                            <td>N{{ deposit.deposit_amount | intcomma }}</td> 
-                            <td>{{ deposit.date | naturaltime }}</td>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ withdrawal.account }}</td>
+                            <td>{{ withdrawal.account.customer.phone }}</td> 
+                            <td>N{{ withdrawal.withdrawal_amount | intcomma }}</td>
+                            <td>{{ withdrawal.date | naturaltime }}</td>
                             
-                            <th scope="row"><a class="btn btn-success btn-sm" href=" {% url 'deposit-slip' deposit.id %} ">Slip</a></th>
+                            <th scope="row"><a class="btn btn-success btn-sm" href=" ">Statement</a></th>
                           </tr>
                           {% endfor %}  
                                      
                         </tbody>
                         {% else %}
-                        <h1 style="text-align: center; color:red;">No Customer Found</h1>
+                        <h1 style="text-align: center; color:red;">No Withdrawal Record Found</h1>
                         {% endif %}
                     </table>
                 </div>
            
         <div class="col-md-4">
             <div class="border bg-white p-3">
-                <h4>Deposit Slip</h4> 
+                <h4>Withdrawal Slip</h4> 
                 <hr>
                 <table class="table bg-white table-borderless">
                   <tbody>
                       <tr>
                           <th scope="row">Acct.: </th>
-                          <td>{{ acct }}</td>                                   
+                          <td>{{ deposited_this_month.account }}</td>                                   
                       </tr> 
 
                       <tr>
@@ -70,7 +70,7 @@
                       <th scope="row">Amount:</th>
                       <td><b style="font-weight: 700;">N{{amount | intcomma }}</b></td>                                   
                     </tr>  
-                    
+                     
 
                     <tr>
                       <th scope="row"></th>

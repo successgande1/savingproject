@@ -1,11 +1,16 @@
 {% extends 'base.html' %}
-{% block title %} Profile Page {% endblock %}
+{% block title %} {{page_title}} {% endblock %}
 
 {% load crispy_forms_tags %}
 
 {% block content %}
 
-<div class="container">
+{% include 'partials/_topnav.html' %} 
+
+<div class="container"> 
+  <!--Included Alert template-->
+  {% include 'partials/_alerts.html' %}
+
     <div class="row my-4">
         <div class="col-md-4">
             
@@ -13,36 +18,37 @@
         <div class="col-md-8">
            <div class="card">
                <div class="card-header bg-info text-white">
-                {{ user.username }} Profile Details
+                {{ staff_user.username }} Profile Details
                </div>
                <div class="card-body">
                 <div class="row">
                     <div class="col-md-8">
-                        <span class="h4">Profile Information</span><a class="btn btn-info btn-sm float-right" href="{% url 'user-profile-update' %}">Edit</a>
+                        <span class="h4">Profile Information</span><a class="btn btn-info btn-sm float-right" href=" {% url 'update-profile' staff_user.id %} ">Edit</a>
                         <hr>
                         <table class="table bg-white table-borderless">
                             <tbody>
                               <tr>
                                 <th scope="row">Name</th>
-                                <td>{{ user.username }}</td>
+                                <td>{{ staff_user.username }}</td>
+                              </tr> 
+                              <tr>
+                                <th scope="row">Names</th>
+                                <td>{{ staff_user.profile.surname }} {{ staff_user.profile.othernames }}</td>
                               </tr>   
                               <tr>
                                 <th scope="row">Phone</th>
-                                <td>{{ user.profile.phone }}</td>                                   
+                                <td>{{ staff_user.profile.phone }}</td>                                   
                               </tr>  
-                              <tr>
-                                <th scope="row">Email</th>
-                                <td>{{ user.email }}</td>                                   
-                              </tr>  
+                               
                               <tr>
                                 <th scope="row">Address</th>
-                                <td>{{ user.profile.address }}</td>                                   
+                                <td>{{ staff_user.profile.address }}</td>                                   
                               </tr>                   
                             </tbody>
                           </table>
                     </div>
                     <div class="col-md-4">
-                        <img class="img-thumbnail" src="{{ user.profile.image.url }}" alt="user-image">
+                        <img class="img-thumbnail" src="{{ staff_user.profile.image.url }}" alt="user-image">
                     </div>
                 </div>
                </div>

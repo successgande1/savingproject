@@ -1,4 +1,8 @@
+{% load crispy_forms_tags %}
+
 {% load humanize %}
+
+
 
 <div class="container">
     <div class="row mt-4">
@@ -10,6 +14,7 @@
                 </div>
                 <div class="card-body">
                    <div class="row">
+
                     {% if user.is_authenticated and user.is_staff and user.is_superuser %}
                        <div class="col-md-4">
                            <a class="text-decoration-none text-dark" href="{% url 'user-register' %}">
@@ -19,61 +24,145 @@
                                </div>
                             </a>
                        </div>
-                       {% else %}
+                       {% elif user.is_authenticated and user.is_staff %}
 
                        <div class="col-md-4 ">
-                        <a class="text-decoration-none text-dark" href="{% url 'customers-list' %}">
+                        <a class="text-decoration-none text-dark" href="{% url 'create-customer' %}">
                             <div class="card my-card shadow text-center p-3 mb-2">
-                                <h4>Customers <i class="fas fa-users"></i> </h4>
-                                <h3>{{ count_accounts }}</h3>
+                                <h3 style="color:brown;">{{ count_accounts }}</h3>
+                                <h6>Customers <i class="fas fa-users"></i> </h6>
+                                
                             </div>
                          </a>
                         </div>
 
+                        {% else %}
+
+                        <div class="col-md-4">
+                            <a class="text-decoration-none text-dark" href=" {% url 'daily-deposits' %} ">
+                                <div class="card my-card shadow text-center p-3 mb-2">
+                                    <h3 style="color:rgb(5, 124, 5);">
+                                        
+    
+                                        N{{ daily_deposits | intcomma }}
+    
+                                       
+                                    
+                                    </h3>
+                                    <h6>Deposits Today <i class="fas fa-box"></i> </h6>
+                                    
+                                </div>
+                             </a>
+                        </div>
+
 
                        {% endif %}
+
+                       {% if user.is_authenticated and user.is_staff %}
+
                        <div class="col-md-4">
-                        <a class="text-decoration-none text-dark" href="">
+                        <a class="text-decoration-none text-dark" href=" {% url 'daily-deposits' %} ">
                             <div class="card my-card shadow text-center p-3 mb-2">
-                                <h4>Deposits Today <i class="fas fa-box"></i> </h4>
-                                <h3>
-                                    {% if user.is_authenticated and user.is_staff and user.is_superuser %}
+                                <h3 style="color:rgb(5, 124, 5);">
+                                    
 
-                                    N{{ total_deposit | intcomma  }}
+                                    N{{ daily_deposits | intcomma }}
 
-                                    {% else %}
-
-                                    {{ count_deposits_today }}
-
-                                    {% endif %}
+                                   
                                 
                                 </h3>
+                                <h6>Deposits Today <i class="fas fa-box"></i> </h6>
+                                
                             </div>
                          </a>
                     </div>
                     <div class="col-md-4">
-                        <a class="text-decoration-none text-dark" href="{% url 'dashboard-witdrawal' %}">
+                        <a class="text-decoration-none text-dark" href="">
                             <div class="card my-card shadow text-center p-3 mb-2">
-                                <h4>Witdrawals Today <i class="fas fa-shopping-cart"></i> </h4>
-                                <h3>
-                                    {% if user.is_authenticated and user.is_staff and user.is_superuser %}
+                                <h3 style="color: red;">
+                                    
+                                    N{{ daily_withdrawals | intcomma  }}
 
-                                    N{{ total_withdrawal | intcomma  }}
-
-                                    {% else %}
-
-                                    {{ count_withdrawals_today }}
-
-                                    {% endif %}
+                                    
                                 
                                 </h3>
+                                <h6>Withdrawn Today <i class="fas fa-shopping-cart"></i> </h6>
+                                
                             </div>
                          </a>
                     </div>
+
+                    {% else %}
+
+                    <div class="col-md-4">
+                        <a class="text-decoration-none text-dark" href=" {% url 'daily-deposits' %} ">
+                            <div class="card my-card shadow text-center p-3 mb-2">
+                                <h3 style="color:rgb(5, 124, 5);">
+                                    
+
+                                    N{{ daily_deposits | intcomma }}
+
+                                   
+                                
+                                </h3>
+                                <h6>Deposits This Month <i class="fas fa-box"></i> </h6>
+                                
+                            </div>
+                         </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a class="text-decoration-none text-dark" href="">
+                            <div class="card my-card shadow text-center p-3 mb-2">
+                                <h3 style="color: red;">
+                                    
+                                    N{{ daily_withdrawals | intcomma  }}
+
+                                    
+                                
+                                </h3>
+                                <h6>My Withdrawals <i class="fas fa-shopping-cart"></i> </h6>
+                                
+                            </div>
+                         </a>
+                    </div>
+
+
+
+                    {% endif %}
+
+
+
                    </div>
                 </div>
             </div>
         </div>
+        {% if page_title == "Customers" %}
+
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h4>Search Customer</h4>
+                </div>
+
+                <div class="card-body">
+
+                    <form action="" method="GET">
+                        {% csrf_token %}
+              
+                        {{searchForm | crispy }}
+              
+                        <input type="submit" class="btn btn-success" value="Search">
+              
+                      </form>
+
+                </div>
+                
+            </div>
+         </div>
+
+         {% else %}
+
         <div class="col-md-4">
             <div class="card">
                 <div class="card-header bg-info text-white">
@@ -86,6 +175,8 @@
                 </div>
             </div>
         </div>
+
+        {% endif %}
     </div>
     
 </div>

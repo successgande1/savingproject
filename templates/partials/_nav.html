@@ -15,7 +15,7 @@
             <li class="nav-item active">
            
             
-            <a class="nav-link text-white" href="{% url 'user-profile' %}">{{ user.username }} Profile <span class="sr-only">(current)</span></a>
+            <a class="nav-link text-white" href="{% url 'user-profile' user.id %}">{{ user.username }} Profile <span class="sr-only">(current)</span></a>
             
            
             </li>

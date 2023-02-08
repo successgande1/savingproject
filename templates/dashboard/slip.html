@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %} {{ page_title }} {% endblock %}
+
+{% load crispy_forms_tags %}
+
+{% load humanize %}
+
+{% block content %}
+
+{% include 'partials/_topnav.html' %}
+
+<div class="container">
+  {% include 'partials/_alerts.html' %}
+    <div class="row my-4">
+         
+        
+              
+                  <div class="col-md-8">
+                 
+                </div>
+           
+        <div class="col-md-4">
+            <div class="border bg-white p-3">
+                <h4>Deposit Slip</h4> 
+                <hr>
+                <table class="table bg-white table-borderless">
+                  <tbody>
+                      <tr>
+                          <th scope="row">Acct.: </th>
+                          <td>{{ customer_deposit.acct }}</td>                                   
+                      </tr> 
+
+                      <tr>
+                        <th scope="row">Acct. Name:</th>
+                        <td> {{customer_deposit.customer.surname}} {{customer_deposit.customer.othernames}}</td>                                   
+                      </tr> 
+
+                      <tr>
+                        <th scope="row"> Deposited Date:</th>
+                        <td><b style="color:red; font-weight:700;">{{customer_deposit.date}}</b> </td>                                   
+                      </tr>   
+                    
+                    <tr>
+                      <th scope="row">Amount:</th>
+                      <td><b style="font-weight: 700;">N{{customer_deposit.deposit_amount | intcomma }}</b></td>                                   
+                    </tr>  
+
+                    <tr>
+                      <th scope="row"></th>
+                      <td><a class="btn btn-success btn-sm" href="">Print</a></td>                                   
+                    </tr> 
+                    
+                                     
+                  </tbody>
+                </table>
+            </div>
+         </div>
+        
+    </div>
+
+    
+  
+</div>
+
+{% endblock %}

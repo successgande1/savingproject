@@ -27,19 +27,19 @@
                             <th scope="col">Action</th>
                           </tr>
                         </thead>
-                        {% if customer_deposits %}
+                        {% if deposits %}
                         <tbody>
                         
                           
-                          {% for deposit in customer_deposits %}
+                          {% for deposit in deposits %}
                           <tr>
-                            <td>{{ forloop.counter }}</td> 
+                            <td>{{ forloop.counter }}</td>
                             <td>{{ deposit.acct }}</td>
                             <td>{{ deposit.customer.phone }}</td> 
-                            <td>N{{ deposit.deposit_amount | intcomma }}</td> 
+                            <td>N{{ deposit.deposit_amount | intcomma }}</td>
                             <td>{{ deposit.date | naturaltime }}</td>
                             
-                            <th scope="row"><a class="btn btn-success btn-sm" href=" {% url 'deposit-slip' deposit.id %} ">Slip</a></th>
+                            <th scope="row"><a class="btn btn-success btn-sm" href="">Slip</a></th>
                           </tr>
                           {% endfor %}  
                                      
@@ -52,29 +52,37 @@
            
         <div class="col-md-4">
             <div class="border bg-white p-3">
-                <h4>Deposit Slip</h4> 
+                <h4>Deposit Summary</h4> 
                 <hr>
                 <table class="table bg-white table-borderless">
                   <tbody>
                       <tr>
-                          <th scope="row">Acct.: </th>
-                          <td>{{ acct }}</td>                                   
+                          <th scope="row">Surname: </th>
+                          <td>{{ customer.surname }}</td>                                   
                       </tr> 
 
                       <tr>
-                        <th scope="row"> Date </th>
-                        <td><b style="color:red; font-weight:700;">{{now}}</b> </td>                                   
+                        <th scope="row">Deposited <b style="color:red;">{{current_month_name}}</b> </th>
+                        <td style="font-family: san serif; color:rgb(6, 82, 189); font-size:1.2rem; font-weight:700;">N {{ deposited_this_month | intcomma }} </td>                                   
                       </tr>   
                     
                     <tr>
-                      <th scope="row">Amount:</th>
-                      <td><b style="font-weight: 700;">N{{amount | intcomma }}</b></td>                                   
+                      <th scope="row">Deposited <b style="color:red;">{{current_date.year}}</b>:</th>
+                      <td style="font-family: san serif; color:rgb(3, 23, 103); font-size:1.2rem; font-weight:700;">N{{deposited_this_year | intcomma }}</td>                                   
                     </tr>  
-                    
+                    <tr>
+                      <th scope="row">Withdrawn: <b>{{current_date.year}}</b> </th>
+                      <td style="font-family: san serif; color:rgb(6, 82, 189); font-size:1.2rem;">N{{withdrawn_this_year | intcomma}}</td>                                   
+                    </tr> 
+
+                    <tr>
+                      <th scope="row">Withdrawn: <b>{{current_month_name}}</b> </th>
+                      <td style="font-family: san serif; color:rgb(6, 82, 189); font-size:1.2rem;">N{{withdrawn_this_month | intcomma}}</td>                                   
+                    </tr> 
 
                     <tr>
                       <th scope="row"></th>
-                      <td><a class="btn btn-success btn-sm" href="">Print</a></td>                                   
+                      <td><a class="btn btn-success btn-sm" href="{% url 'create-deposit' customer.id %}">Deposit Here</a></td>                                   
                     </tr> 
                     
                                      

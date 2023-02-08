@@ -19,19 +19,15 @@
         <div class="col-md-8">
            <div class="card">
                <div class="card-header bg-info text-white">
-                {{ customer.customer.profile.surname }} {{ customer.customer.profile.othernames }} Savings Summary
+                {{ customer.surname }} {{ customer.othernames }} Savings Summary
                </div>
                <div class="card-body">
                 <div class="row">
                     <div class="col-md-8">
-                        <span class="h4">Mini Account Statement</span><a class="btn btn-info btn-sm float-right" href=" {% url 'account-statement' customer.id %} ">Acct. Statment</a>
+                        <span class="h4">Mini Account Statement</span><a class="btn btn-info btn-sm float-right" href="">Service Charges</a>
                         <hr>
                         <table class="table bg-white table-borderless">
                             <tbody>
-                              <tr>
-                                <th scope="row">Today's Date: </th>
-                                <td>{{ now }}</td>                                   
-                              </tr> 
                               <tr>
                                 <th scope="row">Account Number: </th>
                                 <td style="font-family: san serif; color:rgb(6, 82, 189); font-size:1.2rem;">{{ customer.account_number}}</td>
@@ -44,7 +40,10 @@
                                 <th scope="row">Available Balance:</th>
                                 <td style="font-family: san serif; color:rgb(6, 82, 189); font-size:1.2rem;">N{{ deposit |intcomma  }}</td>                                   
                               </tr>  
-                              
+                              <tr>
+                                <th scope="row">Current Date: </th>
+                                <td>{{ current_date }}</td>                                   
+                              </tr> 
                               <tr>
                                 <th scope="row">Total Deposited: <b style="color:red;">{{current_month_name}} {{current_date.year}}</b> </th>
                                 <td>N{{ deposited_this_month |intcomma }}</td>                                   
@@ -54,7 +53,7 @@
                           </table>
                     </div>
                     <div class="col-md-4">
-                        <img class="img-thumbnail" src="{{ user.profile.image.url }}" alt="user-image">
+                        <img class="img-thumbnail" src="" alt="user-image">
                     </div>
                 </div>
                </div>
@@ -62,14 +61,14 @@
         </div>
         <div class="col-md-4">
             <div class="border bg-white p-3">
-                <h4>Add Deposit</h4>
+                <h4>Add Charges</h4>
                 <hr>
                 <form action="" method="POST">
                   {% csrf_token %}
   
-                  {{form | crispy }}
+                  {{form | crispy }} 
   
-                  <input type="submit" class="btn btn-success" value="Deposit">
+                  <input type="submit" class="btn btn-success" value="Add Charge">
   
                 </form>
             </div>

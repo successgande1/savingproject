@@ -31,22 +31,13 @@
                 <tbody>
                 
                   
-                  {% for customer in customers %}  
+                  {% for customer in customers %}
                   <tr>
                     <td>{{ forloop.counter }}</td>
-                    <td>{{ customer.account_number  }}</td> 
-
-                    {% if customer.customer.profile.surname == None %}
-
-                    <td> <a class="btn btn-danger" href=" {% url 'update-customer' customer.customer.id %} ">Update Customer Details.</a> </td>
-
-                    {% else %}
-                    
-                    <td>{{ customer.customer.profile.surname }} {{ customer.customer.profile.othernames }}</td>
-                    
-                    <td>{{ customer.customer.profile.phone }}</td>
-
-                    <td><a class="btn btn-success btn-sm" href="{% url 'account-statement' customer.customer.id %}">Statement</a></td>
+                    <td>{{ customer.account_number }}</td>
+                    <td>{{ customer.surname }} {{ customer.othernames }}</td>
+                    <td>{{ customer.phone }}</td>
+                    <td><a class="btn btn-success btn-sm" href="{% url 'account-statement' customer.id %}">Statement</a></td>
                     
                     
                     
@@ -55,39 +46,29 @@
 
 
                     <th scope="row"><a class="btn btn-success btn-sm" href="{% url 'create-deposit' customer.id %}">Deposit</a></th>
-                    {% endif %}
-                    
                     
                   </tr>
                   {% endfor %}  
                              
                 </tbody>
                 {% else %}
-                <h4 style="text-align: center; color:red;">No Customer Found</h4>
+                <h1>No Customer Found</h1>
                 {% endif %}
             </table>
         </div>
 
         <div class="col-md-4">
           <div class="border bg-white p-3">
-              <h4>Open Account</h4>
+              <h4>Search Customer</h4>
               <hr>
-              
-
-              <form action="" method="POST">
+              <form action="" method="GET">
                 {% csrf_token %}
 
-                {{form | crispy }} 
+                {{form | crispy }}
 
-                {{userForm | crispy }}
-
-                
-
-                <input type="submit" class="btn btn-success" value="Create Account">
+                <input type="submit" class="btn btn-success" value="Search ">
 
               </form>
-
-             
           </div>
        </div>
     </div>
