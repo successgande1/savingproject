@@ -46,8 +46,10 @@
                     
                     <td>{{ customer.customer.profile.phone }}</td>
 
-                    <td><a class="btn btn-success btn-sm" href="{% url 'account-statement' customer.customer.id %}">Statement</a></td>
                     
+                    <td><a class="btn btn-success btn-sm" href="{% url 'account-statement' customer.id %}">Statement</a></td>
+                    
+                   
                     
                     
                     <td><a class="btn btn-danger btn-sm" href="{% url 'dashboard-witdrawal' customer.id  %}">Withdraw</a></td>

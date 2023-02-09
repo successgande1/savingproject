@@ -50,7 +50,7 @@ class Account(models.Model):
         return f' {self.customer} - Account No: {self.account_number}'
 
 
-class Deposit(models.Model):
+class Deposit(models.Model): 
     customer = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True)
     acct = models.CharField(max_length=6, null=True)
     staff = models.ForeignKey(User, on_delete=models.CASCADE, null=True)

@@ -35,26 +35,28 @@
                               <tr>
                                 <th scope="row">Account Number: </th>
                                 <td style="font-family: san serif; color:rgb(6, 82, 189); font-size:1.2rem;">{{ customer.account_number}}</td>
-                              </tr>   
+                              </tr>  
+                              <tr>
+                                <th scope="row">Total Deposited: <b style="color:red;">{{current_year}}</b> </th>
+                                <td> <a class="btn btn-success" href="">N{{ deposited_this_year |intcomma }}</a> </td>                                   
+                              </tr>  
+                              <tr>
+                                <th scope="row">Total Deposited: <b style="color:red;">{{current_month_name}} {{current_year}}</b> </th>
+                                <td> <a class="btn btn-success" href="">N{{ deposited_this_month |intcomma }}</a> </td>                                   
+                              </tr> 
                               <tr>
                                 <th scope="row">Account Balance:</th>
-                                <td style="font-family: san serif; color:red; font-size:1.2rem;">N{{ deposit |intcomma }}</td>                                   
+                                <td style="font-family: san serif; color:red; font-size:1.2rem;"> <a class="btn btn-primary" href="">N{{ deposit |intcomma }}</a> </td>                                   
                               </tr>  
-                              <tr>
-                                <th scope="row">Available Balance:</th>
-                                <td style="font-family: san serif; color:rgb(6, 82, 189); font-size:1.2rem;">N{{ deposit |intcomma  }}</td>                                   
-                              </tr>  
+                            
                               
-                              <tr>
-                                <th scope="row">Total Deposited: <b style="color:red;">{{current_month_name}} {{current_date.year}}</b> </th>
-                                <td>N{{ deposited_this_month |intcomma }}</td>                                   
-                              </tr>  
+                               
                                                
                             </tbody>
                           </table>
                     </div>
                     <div class="col-md-4">
-                        <img class="img-thumbnail" src="{{ user.profile.image.url }}" alt="user-image">
+                        <img class="img-thumbnail" src="{{ customer.customer.profile.image.url }}" alt="user-image">
                     </div>
                 </div>
                </div>

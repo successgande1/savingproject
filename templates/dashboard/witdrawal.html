@@ -17,9 +17,9 @@
 
         
         <div class="col-md-8">
-           <div class="card">
+           <div class="card"> 
                <div class="card-header bg-info text-white">
-                {{ customer.surname }} {{ customer.othernames }} Savings Summary
+                {{ customer.customer.profile.surname }} {{ customer.customer.profile.othernames }} Savings Summary
                </div>
                <div class="card-body">
                 <div class="row">
@@ -38,15 +38,19 @@
                               </tr>   
                               <tr>
                                 <th scope="row">Total Deposited: <b style="color:red;"> {{current_date.year}}</b> </th>
-                                <td>N{{ deposited_this_month |intcomma }}</td>                                   
+                                <td> <a class="btn btn-primary" href="">N{{ deposited_this_year |intcomma }}</a> </td>                                   
                               </tr>  
                               <tr>
-                                <th scope="row">Service Charge [Monthly]:</th>
-                                <td style="font-family: san serif; color:red; font-size:1.2rem;">N{{saving_charge_amount}}</td>                                   
+                                <th scope="row">Total Deposited: <b style="color:red;"> {{current_month_name}}</b> </th>
+                                <td> <a class="btn btn-secondary" href="">N{{ deposited_this_month |intcomma }}</a> </td>                                   
+                              </tr>
+                              <tr>
+                                <th scope="row"> {{current_month_name}} Service Charge:</th>
+                                <td style="font-family: san serif; color:red; font-size:1.2rem;"> <a class="btn btn-danger" href="">N{{saving_charge_amount}}</a> </td>                                   
                               </tr>
                               <tr>
                                 <th scope="row">Total Withdrawn: <b style="color:red;"> {{current_date.year}}</b> </th>
-                                <td>N{{ customer_withdrawals |intcomma }}</td>                                   
+                                <td> <a class="btn btn-danger" href="">N{{ customer_withdrawals |intcomma }}</a> </td>                                   
                               </tr> 
                               <!-- <tr>
                                 <th scope="row">Account Balance:</th>
@@ -56,7 +60,17 @@
 
                               <tr>
                                 <th scope="row">Available Balance:</th>
-                                <td style="font-family: san serif; color:rgb(6, 82, 189); font-size:1.2rem;">N{{ available_balance |intcomma  }}</td>                                   
+                                <td style="font-family: san serif; color:rgb(6, 82, 189); font-size:1.2rem;">
+                                  {% if deposited_this_month == 0  %}
+
+                                  <a class="btn btn-danger" href="">No Deposit</a>
+
+                                  {% else %}
+
+                                  <a class="btn btn-success" href="">{{ available_balance |intcomma  }}</a>
+                                  
+                                  {% endif %}
+                                </td>                                   
                               </tr>  
                                
                               
@@ -65,7 +79,7 @@
                           </table>
                     </div>
                     <div class="col-md-4">
-                        <img class="img-thumbnail" src="{{ user.profile.image.url }}" alt="user-image">
+                        <img class="img-thumbnail" src="{{ customer.customer.profile.image.url }}" alt="user-image">
                     </div>
                 </div>
                </div>

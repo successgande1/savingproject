@@ -31,7 +31,7 @@
                         <tbody>
                         
                           
-                          {% for deposit in deposits %}
+                          {% for deposit in deposits %} 
                           <tr>
                             <td>{{ forloop.counter }}</td>
                             <td>{{ deposit.acct }}</td>
@@ -45,7 +45,7 @@
                                      
                         </tbody>
                         {% else %}
-                        <h1 style="text-align: center; color:red;">No Customer Found</h1>
+                        <h3 style="text-align: center; color:red;">No Deposit Found for {{ customer.customer.profile.surname }} {{ customer.customer.profile.othernames }}</h3>
                         {% endif %}
                     </table>
                 </div>
@@ -57,27 +57,28 @@
                 <table class="table bg-white table-borderless">
                   <tbody>
                       <tr>
-                          <th scope="row">Surname: </th>
-                          <td>{{ customer.surname }}</td>                                   
+                          <th scope="row"> <b style="font-size: 0.8rem;">Surname:</b>  </th>
+                          <td> <b style="color: blue; font-size:0.8rem;"> {{ customer.customer.profile.surname }} </b> </td>                                   
+                      </tr> 
+                      <tr>
+                        <th scope="row"> <b style="font-size: 0.8rem;">Deposited</b> <b style="color:rgb(60, 205, 12); font-size: 0.8rem;">{{current_date.year}}</b>:</th>
+                        <td style="font-family: san serif; color:rgb(179, 5, 51); font-size:1.2rem; font-weight:700;"> <a class="btn btn-success" href="">N{{deposited_this_year | intcomma }}</a> </td>                                   
                       </tr> 
 
                       <tr>
-                        <th scope="row">Deposited <b style="color:red;">{{current_month_name}}</b> </th>
-                        <td style="font-family: san serif; color:rgb(6, 82, 189); font-size:1.2rem; font-weight:700;">N {{ deposited_this_month | intcomma }} </td>                                   
+                        <th scope="row"> <b style="font-size:0.8rem;">Deposited</b> <b style="color:red; font-size: 0.8rem; ">{{current_month_name}}</b> </th>
+                        <td style="font-family: san serif; color:rgb(6, 82, 189); font-size:1.2rem; font-weight:700;"> <a class="btn btn-primary" href="">N {{ deposited_this_month | intcomma }}</a>  </td>                                   
                       </tr>   
                     
+                     
                     <tr>
-                      <th scope="row">Deposited <b style="color:red;">{{current_date.year}}</b>:</th>
-                      <td style="font-family: san serif; color:rgb(3, 23, 103); font-size:1.2rem; font-weight:700;">N{{deposited_this_year | intcomma }}</td>                                   
-                    </tr>  
-                    <tr>
-                      <th scope="row">Withdrawn: <b>{{current_date.year}}</b> </th>
-                      <td style="font-family: san serif; color:rgb(6, 82, 189); font-size:1.2rem;">N{{withdrawn_this_year | intcomma}}</td>                                   
+                      <th scope="row"> <b style="font-size: 0.8rem;">Withdrawn:</b> <b style="color:red; font-size: 0.8rem;">{{current_date.year}}</b> </th>
+                      <td style="font-family: san serif; color:rgb(6, 82, 189); font-size:1.2rem;"> <a class="btn btn-secondary" href="">N{{withdrawn_this_year | intcomma}}</a> </td>                                   
                     </tr> 
 
                     <tr>
-                      <th scope="row">Withdrawn: <b>{{current_month_name}}</b> </th>
-                      <td style="font-family: san serif; color:rgb(6, 82, 189); font-size:1.2rem;">N{{withdrawn_this_month | intcomma}}</td>                                   
+                      <th scope="row"> <b style="font-size: 0.8rem;">Withdrawn:</b> <b style="color:red; font-size: 0.8rem;">{{current_month_name}}</b> </th>
+                      <td style="font-family: san serif; color:rgb(6, 82, 189); font-size:1.2rem;"> <a class="btn btn-danger" href="">N{{withdrawn_this_month | intcomma}}</a> </td>                                   
                     </tr> 
 
                     <tr>

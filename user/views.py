@@ -52,11 +52,11 @@ def create_account(request):
         now = datetime.datetime.now()
     
         #Get Current Month Name from Calendar
-        #current_month_name = calendar.month_name[date.today().month]
+        current_month_name = now.strftime('%B')
         
         
         #get all customers
-        customer = Account.objects.order_by('-date')[:8]
+        customer = Account.objects.all()
         #Count Users
         count_users = User.objects.count() 
         
@@ -80,8 +80,9 @@ def create_account(request):
             list_customers = Account.objects.filter(user_filter) 
         
         else:
-            list_customers = Account.objects.all()
-
+            list_customers = Account.objects.order_by('-date')[:8]
+            now = datetime.datetime.now()
+            
         paginator = Paginator(list_customers, 10)
         page = request.GET.get('page')
         paged_list_customers = paginator.get_page(page)
@@ -93,6 +94,7 @@ def create_account(request):
             userForm = CreateUserForm(request.POST or None)
 
             if form.is_valid() and userForm.is_valid():
+                #Get customer Account Number from Account Form
                 acct = form.cleaned_data.get('account_number')
                 acct_user = userForm.cleaned_data.get('username')
                 
@@ -110,7 +112,7 @@ def create_account(request):
                     
                     return redirect('create-customer')
                 else:
-                    messages.error(request, f'Account Number Already Exist, Try Again')
+                    messages.error(request, f'Something Went Wrong, Please Try Again')
                     
                     
         else:
@@ -275,9 +277,10 @@ def customer_deposit(request, id):
 
         #Get Date of the Day
         now = datetime.datetime.now()
-        
+        current_year = now.year
         #Get Current Month Name from Calendar
-        #current_month_name = calendar.month_name[date.today().month]
+        current_month_name = now.strftime('%B')
+        
         #Get Total Deposited this Month for the customer by ID
         deposited_this_month = Deposit.objects.filter(customer__id=id, date__year=now.year, date__month=now.month).aggregate(deposited_this_month=Sum('deposit_amount')).get('deposited_this_month') or 0
         #Count Customers
@@ -303,7 +306,11 @@ def customer_deposit(request, id):
             messages.error(request, 'Customer Does Not Exist')
             return redirect('create-customer')
         else:
-            print(acct)
+            #Get Customer Current Month Deposit
+            deposited_this_month = Deposit.objects.filter(customer__id=customerID, date__month=now.month).aggregate(deposited_this_month=Sum('deposit_amount')).get('deposited_this_month') or 0
+            #Get Customer Current Year Deposit
+            deposited_this_year = Deposit.objects.filter(customer__id = customerID, date__year=now.year, date__month=now.month).aggregate(deposited_this_year=Sum('deposit_amount')).get('deposited_this_year') or 0
+            #withdrawn_this_month = Witdrawal.objects.filter(customer__id=customerID,  date__month=now.month).aggregate(withdrawn_this_month=Sum('withdrawal_amount')).get('withdrawn_this_month') or 0
             #Get the Customer Total Deposit by ID
             deposit = Deposit.objects.filter(customer_id = customerID).aggregate(total=Sum('deposit_amount')
             )['total'] or Decimal()
@@ -349,7 +356,9 @@ def customer_deposit(request, id):
                         'page_title':page_title,
                         'acct':acct,
                         'now':now,
+                        'deposited_this_year':deposited_this_year,
                         'count_accounts':count_accounts,
+                        'current_month_name':current_month_name,
                         })
                         
                         messages.success(request, f'N{amount} Deposited to Account {acct} Successfully.')
@@ -366,9 +375,11 @@ def customer_deposit(request, id):
                     'page_title':page_title,
                     'customer':customer,
                     'now':now,
-                
+                    'current_year':current_year,
+                    'current_month_name':current_month_name,
                     'form':form,
                     'deposited_this_month':deposited_this_month,
+                    'deposited_this_year':deposited_this_year,
                     'acct':acct,
                     })
             return render(request, 'dashboard/deposit.html', context)
@@ -378,27 +389,30 @@ def customer_deposit(request, id):
 #Customer Account Statement View
 @login_required(login_url='user-login')
 def account_statement(request, id):
+    page_title = 'Account Statement'
     #Get the logged in user
     user = request.user
     #check if logged in user is staff
     if user.is_staff:
         try:
             customer = Account.objects.get(id=id)
+            #Get Customer ID
+            customerID = customer.customer.id
             
         except Account.DoesNotExist:
-            messages.error(request, 'Customer Does Not Exist')
+            messages.error(request, 'Something Went Wrong')
             return redirect('create-customer')
         else:
             #Get Customer Deposits by ID and order by Current Date with 5 Displayed
-            deposits = Deposit.objects.filter(customer__id=id).order_by('-date')[:5]
+            deposits = Deposit.objects.filter(customer__id=customerID).order_by('-date')[:5]
             #deposits = deposits.order_by('-date')
             current_date = datetime.datetime.now()
             #Get Current Month Name from Calendar
-            #current_month_name = calendar.month_name[date.today().month] 
+            current_month_name = current_date.strftime('%B')
             #get Current Month total deposited by customer ID   
-            deposited_this_month = Deposit.objects.filter(customer__id=id, date__year=current_date.year, date__month=current_date.month).aggregate(deposited_this_month=Sum('deposit_amount')).get('deposited_this_month') or 0
+            deposited_this_month = Deposit.objects.filter(customer__id=customerID, date__year=current_date.year, date__month=current_date.month).aggregate(deposited_this_month=Sum('deposit_amount')).get('deposited_this_month') or 0
             #Get Current Year Deposited by customer ID
-            deposited_this_year = Deposit.objects.filter(customer__id=id, date__year=current_date.year).aggregate(deposited_this_year=Sum('deposit_amount')).get('deposited_this_year') or 0
+            deposited_this_year = Deposit.objects.filter(customer__id=customerID, date__year=current_date.year).aggregate(deposited_this_year=Sum('deposit_amount')).get('deposited_this_year') or 0
             #Count number of Customers
             count_accounts = Account.objects.count()
             #Get Today's Total Deposits
@@ -406,9 +420,9 @@ def account_statement(request, id):
             #Get Today's Total Withdrawn
             daily_withdrawals = Witdrawal.objects.filter(date__year=current_date.year, date__month=current_date.month, date__day=current_date.day).aggregate(daily_withdrawals=Sum('withdrawal_amount')).get('daily_withdrawals') or 0
             #get Current Month total Withdrawn by customer ID   
-            withdrawn_this_month = Witdrawal.objects.filter(account__id=id, date__year=current_date.year, date__month=current_date.month).aggregate(withdrawn_this_month=Sum('withdrawal_amount')).get('withdrawn_this_month') or 0
+            withdrawn_this_month = Witdrawal.objects.filter(account__id=customerID, date__year=current_date.year, date__month=current_date.month).aggregate(withdrawn_this_month=Sum('withdrawal_amount')).get('withdrawn_this_month') or 0
             #Get Current Year Total Withdrawn by customer ID
-            withdrawn_this_year = Witdrawal.objects.filter(account__id=id, date__year=current_date.year).aggregate(withdrawn_this_year=Sum('withdrawal_amount')).get('withdrawn_this_year') or 0
+            withdrawn_this_year = Witdrawal.objects.filter(account__id=customerID, date__year=current_date.year).aggregate(withdrawn_this_year=Sum('withdrawal_amount')).get('withdrawn_this_year') or 0
 
             context = {
                 'withdrawn_this_month':withdrawn_this_month,
@@ -419,8 +433,9 @@ def account_statement(request, id):
                 'deposits':deposits,
                 'customer':customer,
                 'deposited_this_month':deposited_this_month,
-                
+                'page_title':page_title,
                 'current_date':current_date,
+                'current_month_name':current_month_name,
                 'deposited_this_year':deposited_this_year,
 
             }
@@ -528,194 +543,210 @@ def Add_Service_Charge(request):
 #Customer Withdrawal View
 @login_required(login_url='user-login')
 def witdrawal(request, id):
-    #Get the logged in User
-    user = request.user
-    #Check if the logged in User is Staff User
-    if user.is_staff:
-        page_title = 'Add Withdrawal'
-        #Create an Empty Dictionary
-        context = {
-
-        }
-        #Get Login user
-        user = request.user
-
-        form = CustomerwithdrawalForm(request.POST or None)
-        #GET ALL USERS
-        all_users = User.objects.all()
-        #Count users
-        count_users = all_users.count()
-        #Read all Accounts
-        user_accounts = Account.objects.all()[:10]
-        #Count Number of User Accounts
-        count_accounts = user_accounts.count()
-
-        #Retrieve all Withdrawals
-        withdrawals = Witdrawal.objects.all()
-
-        #Get Current Date
-        current_date = datetime.datetime.now()
-
-        #Get Day of the Month from the current Date
-        day_of_month = current_date.day
-
-        #Get Service Charge 
-        # try:
-        saving_fee = Fee.objects.get(description='Saving')
-        # except Fee.DoesNotExist:
-        #     return redirect('create-customer')
-        # else:
-        
-        #Get the exact charge date
-        charge_date = saving_fee.due_day
-
-        #Saving Fee Amount
-        saving_charge_amount = saving_fee.charge_amount
-
-        #Get Current Month Name from Calendar
-        #current_month_name = calendar.month_name[date.today().month] 
-        #get Current Month total deposited by customer ID   
-        deposited_this_month = Deposit.objects.filter(customer__id=id, date__year=current_date.year, date__month=current_date.month).aggregate(deposited_this_month=Sum('deposit_amount')).get('deposited_this_month') or 0
-        #Get Current Year Deposited by customer ID
-        deposited_this_year = Deposit.objects.filter(customer__id=id, date__year=current_date.year).aggregate(deposited_this_year=Sum('deposit_amount')).get('deposited_this_year') or 0
-        #Count number of Customers
-        count_accounts = Account.objects.count()
-        #Get Today's Total Deposits
-        daily_deposits = Deposit.objects.filter(date__year=current_date.year, date__month=current_date.month, date__day=current_date.day).aggregate(daily_deposits=Sum('deposit_amount')).get('daily_deposits') or 0
-        #Get Today's Total Withdrawn
-        daily_withdrawals = Witdrawal.objects.filter(date__year=current_date.year, date__month=current_date.month, date__day=current_date.day).aggregate(daily_withdrawals=Sum('withdrawal_amount')).get('daily_withdrawals') or 0
-        #get Current Month total Withdrawn by customer ID   
-        withdrawn_this_month = Witdrawal.objects.filter(account__id=id, date__year=current_date.year, date__month=current_date.month).aggregate(withdrawn_this_month=Sum('withdrawal_amount')).get('withdrawn_this_month') or 0
-        #Get Current Year Total Withdrawn by customer ID
-        withdrawn_this_year = Witdrawal.objects.filter(account__id=id, date__year=current_date.year).aggregate(withdrawn_this_year=Sum('withdrawal_amount')).get('withdrawn_this_year') or 0
-        
-        #Group Customer's Deposits for Agregation
-        group_deposits = Deposit.objects.filter(date__year=current_date.year, date__month=current_date.month).order_by('acct')
-        
-        #Get Totals of Customer's Savings
-        customers_total_savings = group_deposits.annotate(total=Sum('deposit_amount')).order_by('-date')[:5]
-        
-        #Get Customer Total Withdrawal
-        customer_withdrawals = Witdrawal.objects.filter(account__id = id).aggregate(total=Sum('withdrawal_amount')
-        )['total'] or Decimal()
-
-        #Get the Customer total deposit
-        customer_deposit = Deposit.objects.filter(customer_id = id).aggregate(total=Sum('deposit_amount')
-        )['total'] or Decimal()
-
-        
-        #Customer Account Balance
-        acct_balance = deposited_this_month - saving_charge_amount 
-        
-        #Minus the Customer Account Balance from the Service Charge Amount
-        available_balance = acct_balance - withdrawn_this_month
-        try:
-            #Check the Customer ID in DB
-            customer = Account.objects.get(id=id)
-            
-            #Customer Account
-            acct = customer.account_number
-        except Account.DoesNotExist:
-            messages.error(request, 'Customer Does Not Exist')
-            return redirect('create-customer')
-        else:
-    
-            if request.method == 'POST':
-
-                
-                #Deposit Form
-                form = CustomerwithdrawalForm(request.POST or None)
-                
-                if form.is_valid():
-                    #Withdrawal amount form value
-                    amount = form.cleaned_data['withdrawal_amount']
-
-                    #Check if Customer Withdrawal is a Positive Figure
-                    if amount < 1:
-                        messages.error(request, f'N{amount} is NOT a Valid Withdrawal Amount')
-                    
-                    #Check if Inputed Amount is Greater Than Customer Available Balance
-                    elif amount > available_balance: 
-                        messages.error(request, f'N{amount} is More Than Customer Aval. Balance of N{available_balance}')
-
-                    
-                        #messages.error(request, f'Sorry, You can NOT Empty Your Acct. at the Moment')
-                    else:
-                        
-                        
-                        #Add Customer Deposit
-                        debit_acct = Witdrawal.objects.create(account=customer, staff=user, withdrawal_amount=amount)
-                        #Save the Customer Deposit
-                        debit_acct.save()
-
-                        now = datetime.datetime.now()
-                        #Get Total Daily Deposits
-                        daily_deposits = Deposit.objects.filter(date__year=now.year, date__month=now.month, date__day=now.day).aggregate(daily_deposits=Sum('deposit_amount')).get('daily_deposits') or 0
-                        #Get Today's Total Withdrawal
-                        daily_withdrawals = Witdrawal.objects.filter(date__year=now.year, date__month=now.month, date__day=now.day).aggregate(daily_withdrawals=Sum('withdrawal_amount')).get('daily_withdrawals') or 0
-
-                        #Get Customer Deposits by ID 
-                        customer_withdrawals = Witdrawal.objects.filter(account_id=id)
-
-                        #get Current Month total deposited by customer ID   
-                        deposited_this_month = Deposit.objects.filter(customer__id=id, date__year=now.year, date__month=now.month).aggregate(deposited_this_month=Sum('deposit_amount')).get('deposited_this_month') or 0
-
-                        #get Current Month total Withdrawn by customer ID   
-                        withdrawn_this_month = Witdrawal.objects.filter(account__id=id, date__year=current_date.year, date__month=current_date.month).aggregate(withdrawn_this_month=Sum('withdrawal_amount')).get('withdrawn_this_month') or 0
-
-                        #Customer Account Balance
-                        acct_balance = deposited_this_month - saving_charge_amount 
-        
-                        #Minus the Customer Account Balance from the Service Charge Amount
-                        available_balance = acct_balance - withdrawn_this_month
-
-                        
-
-                        context.update(  {
-                        'customer':customer,
-                        'customer_withdrawals':customer_withdrawals,
-                        'deposited_this_month':deposited_this_month, 
-                        'daily_deposits':daily_deposits,
-                        'daily_withdrawals':daily_withdrawals,
-                        'customers':customers_total_savings,
-                        'page_title':page_title,
-                        'count_accounts':count_accounts,
-                        'now':now,
-                        'amount':amount,
-                        })
-                        
-                        
-                        messages.success(request, f'N{amount} Withdrawn Successfully from {acct}. New Bal. N{available_balance}')
-                        
-                        return render(request, 'dashboard/withdrawal_slip.html', context)
-                else:
-                    form = CustomerwithdrawalForm()
-        
-        
-        context = {
-            'saving_charge_amount':saving_charge_amount,
-            'available_balance':available_balance,
-            'day_of_month':day_of_month,
-            'charge_date':charge_date,
-            'acct_balance':acct_balance,
-            'customer_withdrawals':customer_withdrawals,
-            'deposited_this_month':deposited_this_month, 
-            'customer':customer, 
-            
-            'customer_deposit':customer_deposit,
-            'current_date':current_date,
-            'count_accounts':count_accounts,
-            'daily_deposits':daily_deposits,
-            'daily_withdrawals':daily_withdrawals,
-            'withdrawn_this_month':withdrawn_this_month,
-            'withdrawn_this_year':withdrawn_this_year,
-            'count_users':count_users,
-            'form':form,
-            'page_title':page_title,
-        }
-        return render(request, 'dashboard/witdrawal.html', context)
+    #Check whether Customer ACCOUNT EXIST USING ID
+    try:
+        customerID = Account.objects.get(id=id)
+        #Get the Customer ID from Account
+        customerID = customerID.customer.id
+        profile = Profile.objects.get(customer=customerID)
+    except Account.DoesNotExist:
+        messages.error(request, 'Something Went Wrong')
+        return redirect('create-customer')
     else:
-        return redirect('user-login')
+        #Get the logged in User
+        user = request.user
+        #Check if the logged in User is Staff User
+        if user.is_staff:
+            page_title = 'Add Withdrawal'
+            #Create an Empty Dictionary
+            context = {
+
+            }
+            #Get Login user
+            user = request.user
+
+            form = CustomerwithdrawalForm(request.POST or None)
+            #GET ALL USERS
+            all_users = User.objects.all()
+            #Count users
+            count_users = all_users.count()
+            #Read all Accounts
+            user_accounts = Account.objects.all()[:10]
+            #Count Number of User Accounts
+            count_accounts = user_accounts.count()
+
+            #Retrieve all Withdrawals
+            withdrawals = Witdrawal.objects.all()
+
+            #Get Current Date
+            current_date = datetime.datetime.now()
+
+            #Get Day of the Month from the current Date
+            day_of_month = current_date.day
+
+            #Get Service Charge 
+            # try:
+            saving_fee = Fee.objects.get(description='Saving')
+            # except Fee.DoesNotExist:
+            #     return redirect('create-customer')
+            # else:
+            
+            #Get the exact charge date
+            charge_date = saving_fee.due_day
+
+            #Saving Fee Amount
+            saving_charge_amount = saving_fee.charge_amount
+
+            #Get Current Month Name from Current Date
+            current_month_name = current_date.strftime('%B')
+            #get Current Month total deposited by customer ID   
+            deposited_this_month = Deposit.objects.filter(customer__id=customerID, date__year=current_date.year, date__month=current_date.month).aggregate(deposited_this_month=Sum('deposit_amount')).get('deposited_this_month') or 0
+            #Get Current Year Deposited by customer ID
+            deposited_this_year = Deposit.objects.filter(customer__id=customerID, date__year=current_date.year).aggregate(deposited_this_year=Sum('deposit_amount')).get('deposited_this_year') or 0
+            #Count number of Customers
+            count_accounts = Account.objects.count()
+            #Get Today's Total Deposits
+            daily_deposits = Deposit.objects.filter(date__year=current_date.year, date__month=current_date.month, date__day=current_date.day).aggregate(daily_deposits=Sum('deposit_amount')).get('daily_deposits') or 0
+            #Get Today's Total Withdrawn
+            daily_withdrawals = Witdrawal.objects.filter(date__year=current_date.year, date__month=current_date.month, date__day=current_date.day).aggregate(daily_withdrawals=Sum('withdrawal_amount')).get('daily_withdrawals') or 0
+            #get Current Month total Withdrawn by customer ID   
+            withdrawn_this_month = Witdrawal.objects.filter(account__id=customerID, date__year=current_date.year, date__month=current_date.month).aggregate(withdrawn_this_month=Sum('withdrawal_amount')).get('withdrawn_this_month') or 0
+            #Get Current Year Total Withdrawn by customer ID
+            withdrawn_this_year = Witdrawal.objects.filter(account__id=customerID, date__year=current_date.year).aggregate(withdrawn_this_year=Sum('withdrawal_amount')).get('withdrawn_this_year') or 0
+            
+            #Group Customer's Deposits for Agregation
+            group_deposits = Deposit.objects.filter(date__year=current_date.year, date__month=current_date.month).order_by('acct')
+            
+            #Get Totals of Customer's Savings
+            customers_total_savings = group_deposits.annotate(total=Sum('deposit_amount')).order_by('-date')[:5]
+            
+            #Get Customer Total Withdrawal
+            customer_withdrawals = Witdrawal.objects.filter(account__id = customerID).aggregate(total=Sum('withdrawal_amount')
+            )['total'] or Decimal()
+
+            #Get the Customer total deposit
+            customer_deposit = Deposit.objects.filter(customer_id = customerID).aggregate(total=Sum('deposit_amount')
+            )['total'] or Decimal()
+
+            
+            #Customer Account Balance
+            acct_balance = deposited_this_month - saving_charge_amount 
+            
+            #Minus the Customer Account Balance from the Service Charge Amount
+            available_balance = acct_balance - withdrawn_this_month
+
+            try:
+                #Check the Customer ID in DB
+                customer = Account.objects.get(id=id)
+                
+                #Customer Account
+                acct = customer.account_number
+                
+                
+            except Account.DoesNotExist:
+                messages.error(request, 'Customer Does Not Exist')
+                return redirect('create-customer')
+            else:
+        
+                if request.method == 'POST':
+
+                    
+                    #Deposit Form
+                    form = CustomerwithdrawalForm(request.POST or None)
+                    
+                    if form.is_valid():
+                        #Withdrawal amount form value
+                        amount = form.cleaned_data['withdrawal_amount']
+
+                        #Check if Customer Withdrawal is a Positive Figure
+                        if amount < 1:
+                            messages.error(request, f'N{amount} is NOT a Valid Withdrawal Amount')
+                        
+                        #Check if Inputed Amount is Greater Than Customer Available Balance
+                        elif amount > available_balance: 
+                            messages.error(request, f'N{amount} is More Than Customer Aval. Balance of N{available_balance}')
+
+                        
+                            #messages.error(request, f'Sorry, You can NOT Empty Your Acct. at the Moment')
+                        else:
+                            
+                            
+                            #Add Customer Deposit
+                            debit_acct = Witdrawal.objects.create(account=profile, staff=user, withdrawal_amount=amount)
+                            #Save the Customer Deposit
+                            debit_acct.save()
+
+                            now = datetime.datetime.now()
+                            #Get Total Daily Deposits
+                            daily_deposits = Deposit.objects.filter(date__year=now.year, date__month=now.month, date__day=now.day).aggregate(daily_deposits=Sum('deposit_amount')).get('daily_deposits') or 0
+                            #Get Today's Total Withdrawal
+                            daily_withdrawals = Witdrawal.objects.filter(date__year=now.year, date__month=now.month, date__day=now.day).aggregate(daily_withdrawals=Sum('withdrawal_amount')).get('daily_withdrawals') or 0
+
+                            #Get Customer Deposits by ID 
+                            customer_withdrawals = Witdrawal.objects.filter(account_id=customerID)
+
+                            #get Current Month total deposited by customer ID   
+                            deposited_this_month = Deposit.objects.filter(customer__id=customerID, date__year=now.year, date__month=now.month).aggregate(deposited_this_month=Sum('deposit_amount')).get('deposited_this_month') or 0
+
+                            #get Current Month total Withdrawn by customer ID   
+                            withdrawn_this_month = Witdrawal.objects.filter(account__id=customerID, date__year=current_date.year, date__month=current_date.month).aggregate(withdrawn_this_month=Sum('withdrawal_amount')).get('withdrawn_this_month') or 0
+
+                            #Customer Account Balance
+                            acct_balance = deposited_this_month - saving_charge_amount 
+            
+                            #Minus the Customer Account Balance from the Service Charge Amount
+                            available_balance = acct_balance - withdrawn_this_month
+
+                            
+
+                            context.update(  {
+                            'customer':customer,
+                            'customer_withdrawals':customer_withdrawals,
+                            'deposited_this_month':deposited_this_month, 
+                            'daily_deposits':daily_deposits,
+                            'daily_withdrawals':daily_withdrawals,
+                            'customers':customers_total_savings,
+                            'page_title':page_title,
+                            'count_accounts':count_accounts,
+                            'now':now,
+                            'amount':amount,
+                            'acct':acct,
+                            'current_month_name':current_month_name,
+                            })
+                            
+                            
+                            messages.success(request, f'N{amount} Withdrawn Successfully from {acct}. New Bal. N{available_balance}')
+                            
+                            return render(request, 'dashboard/withdrawal_slip.html', context)
+                    else:
+                        form = CustomerwithdrawalForm()
+            
+            
+            context = {
+                'saving_charge_amount':saving_charge_amount,
+                'available_balance':available_balance,
+                'day_of_month':day_of_month,
+                'charge_date':charge_date,
+                'acct_balance':acct_balance,
+                'customer_withdrawals':customer_withdrawals,
+                'deposited_this_month':deposited_this_month, 
+                'customer':customer, 
+                'deposited_this_year':deposited_this_year,
+                'customer_deposit':customer_deposit,
+                'current_date':current_date,
+                'count_accounts':count_accounts,
+                'daily_deposits':daily_deposits,
+                'daily_withdrawals':daily_withdrawals,
+                'withdrawn_this_month':withdrawn_this_month,
+                'withdrawn_this_year':withdrawn_this_year,
+                'count_users':count_users,
+                'form':form,
+                'current_month_name':current_month_name,
+                'page_title':page_title,
+            }
+            return render(request, 'dashboard/witdrawal.html', context)
+        else:
+            return redirect('user-login')
 
 #Daily Deposit List
 @login_required(login_url='user-login')

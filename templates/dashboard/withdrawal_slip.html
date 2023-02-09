@@ -34,8 +34,8 @@
                           {% for withdrawal in customer_withdrawals %}
                           <tr>
                             <td>{{ forloop.counter }}</td>
-                            <td>{{ withdrawal.account }}</td>
-                            <td>{{ withdrawal.account.customer.phone }}</td> 
+                            <td>{{ acct }}</td>
+                            <td>{{ customer.customer.profile.phone }}</td> 
                             <td>N{{ withdrawal.withdrawal_amount | intcomma }}</td>
                             <td>{{ withdrawal.date | naturaltime }}</td>
                             
@@ -58,7 +58,7 @@
                   <tbody>
                       <tr>
                           <th scope="row">Acct.: </th>
-                          <td>{{ deposited_this_month.account }}</td>                                   
+                          <td>{{ acct }}</td>                                   
                       </tr> 
 
                       <tr>
