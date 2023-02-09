@@ -52,7 +52,7 @@
            
         <div class="col-md-4">
             <div class="border bg-white p-3">
-                <h4>Deposit Summary</h4> 
+                <h4>Transaction Summary</h4> 
                 <hr>
                 <table class="table bg-white table-borderless">
                   <tbody>
@@ -68,7 +68,12 @@
                       <tr>
                         <th scope="row"> <b style="font-size:0.8rem;">Deposited</b> <b style="color:red; font-size: 0.8rem; ">{{current_month_name}}</b> </th>
                         <td style="font-family: san serif; color:rgb(6, 82, 189); font-size:1.2rem; font-weight:700;"> <a class="btn btn-primary" href="">N {{ deposited_this_month | intcomma }}</a>  </td>                                   
-                      </tr>   
+                      </tr>  
+                      
+                      <tr>
+                        <th scope="row"> <b style="font-size: 0.8rem;">Withdrawn:</b> <b style="color:red; font-size: 0.8rem;">{{current_month_name}}</b> </th>
+                        <td style="font-family: san serif; color:rgb(6, 82, 189); font-size:1.2rem;"> <a class="btn btn-danger" href="">N{{withdrawn_this_month | intcomma}}</a> </td>                                   
+                      </tr> 
                     
                      
                     <tr>
@@ -76,10 +81,15 @@
                       <td style="font-family: san serif; color:rgb(6, 82, 189); font-size:1.2rem;"> <a class="btn btn-secondary" href="">N{{withdrawn_this_year | intcomma}}</a> </td>                                   
                     </tr> 
 
+                    
                     <tr>
-                      <th scope="row"> <b style="font-size: 0.8rem;">Withdrawn:</b> <b style="color:red; font-size: 0.8rem;">{{current_month_name}}</b> </th>
-                      <td style="font-family: san serif; color:rgb(6, 82, 189); font-size:1.2rem;"> <a class="btn btn-danger" href="">N{{withdrawn_this_month | intcomma}}</a> </td>                                   
-                    </tr> 
+                      <th scope="row"> <b style="font-size: 0.8rem;">Service Charge:</b> <b style="color:red; font-size: 0.8rem;">{{current_month_name}}</b> </th>
+                      <td style="font-family: san serif; color:rgb(6, 82, 189); font-size:1.2rem;"> <a class="btn btn-danger" href="">N{{monthly_charges | intcomma}}</a> </td>                                   
+                    </tr>
+                    <tr>
+                      <th scope="row"> <b style="font-size: 0.8rem;">Avail. Balance:</b> <b style="color:red; font-size: 0.8rem;">{{current_month_name}}</b> </th>
+                      <td style="font-family: san serif; color:rgb(6, 82, 189); font-size:1.2rem;"> <a class="btn btn-danger" href="">N{{available_balance | intcomma}}</a> </td>                                   
+                    </tr>
 
                     <tr>
                       <th scope="row"></th>

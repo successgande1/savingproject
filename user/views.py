@@ -74,8 +74,8 @@ def create_account(request):
         if searchForm.is_valid():
             #Value of search form
             value = searchForm.cleaned_data['value']
-            #Filter Customer by Surname, Othernames , Account Number using Q Objects
-            user_filter = Q(customer__exact = value) | Q(account_number__exact = value)
+            #Filter Customer by Surname or Othernames or Account Number using Q Objects
+            user_filter = Q(customer__profile__surname__exact = value) | Q(customer__profile__othernames__exact = value) | Q(account_number__exact = value)
             #Apply the Customer Object Filter
             list_customers = Account.objects.filter(user_filter) 
         
@@ -284,12 +284,18 @@ def customer_deposit(request, id):
         #Get Total Deposited this Month for the customer by ID
         deposited_this_month = Deposit.objects.filter(customer__id=id, date__year=now.year, date__month=now.month).aggregate(deposited_this_month=Sum('deposit_amount')).get('deposited_this_month') or 0
         #Count Customers
+        withdrawn_this_month = Witdrawal.objects.filter(account_id=id,  date__month=now.month).aggregate(withdrawn_this_month=Sum('withdrawal_amount')).get('withdrawn_this_month') or 0
+        
         count_accounts = Account.objects.count()
         #Get Today's Total Deposit 
         daily_deposits = Deposit.objects.filter(date__year=now.year, date__month=now.month, date__day=now.day).aggregate(daily_deposits=Sum('deposit_amount')).get('daily_deposits') or 0
         #Get Today's Total Withdrawal
         daily_withdrawals = Witdrawal.objects.filter(date__year=now.year, date__month=now.month, date__day=now.day).aggregate(daily_withdrawals=Sum('withdrawal_amount')).get('daily_withdrawals') or 0
+        
+        service_charge = Fee.objects.get(description='Saving')
+        monthly_charge = service_charge.charge_amount
 
+        
         
         try:
             #Check the Customer ID in DB
@@ -306,17 +312,22 @@ def customer_deposit(request, id):
             messages.error(request, 'Customer Does Not Exist')
             return redirect('create-customer')
         else:
+            
             #Get Customer Current Month Deposit
             deposited_this_month = Deposit.objects.filter(customer__id=customerID, date__month=now.month).aggregate(deposited_this_month=Sum('deposit_amount')).get('deposited_this_month') or 0
             #Get Customer Current Year Deposit
             deposited_this_year = Deposit.objects.filter(customer__id = customerID, date__year=now.year, date__month=now.month).aggregate(deposited_this_year=Sum('deposit_amount')).get('deposited_this_year') or 0
-            #withdrawn_this_month = Witdrawal.objects.filter(customer__id=customerID,  date__month=now.month).aggregate(withdrawn_this_month=Sum('withdrawal_amount')).get('withdrawn_this_month') or 0
+            #Get Current Month Withdrawal 
+            withdrawn_this_month = Witdrawal.objects.filter(account_id=customerID,  date__month=now.month).aggregate(withdrawn_this_month=Sum('withdrawal_amount')).get('withdrawn_this_month') or 0
             #Get the Customer Total Deposit by ID
             deposit = Deposit.objects.filter(customer_id = customerID).aggregate(total=Sum('deposit_amount')
             )['total'] or Decimal()
             #Get the Customer Deposit Details
             customer_deposits = Deposit.objects.filter(customer__id = customerID)
-
+            #Available balance
+            available_balance = deposited_this_month - withdrawn_this_month
+            #Get Customer Service charge from balance
+            available_balance = available_balance - monthly_charge
             if request.method == 'POST':
                 #Deposit Form
                 form = CustomerDepositForm(request.POST or None)
@@ -381,6 +392,9 @@ def customer_deposit(request, id):
                     'deposited_this_month':deposited_this_month,
                     'deposited_this_year':deposited_this_year,
                     'acct':acct,
+                    'monthly_charge':monthly_charge,
+                    'available_balance':available_balance,
+                    'withdrawn_this_month':withdrawn_this_month,
                     })
             return render(request, 'dashboard/deposit.html', context)
     else:
@@ -403,6 +417,8 @@ def account_statement(request, id):
             messages.error(request, 'Something Went Wrong')
             return redirect('create-customer')
         else:
+            service_charge = Fee.objects.get(description='Saving')
+            monthly_charges = service_charge.charge_amount
             #Get Customer Deposits by ID and order by Current Date with 5 Displayed
             deposits = Deposit.objects.filter(customer__id=customerID).order_by('-date')[:5]
             #deposits = deposits.order_by('-date')
@@ -423,7 +439,9 @@ def account_statement(request, id):
             withdrawn_this_month = Witdrawal.objects.filter(account__id=customerID, date__year=current_date.year, date__month=current_date.month).aggregate(withdrawn_this_month=Sum('withdrawal_amount')).get('withdrawn_this_month') or 0
             #Get Current Year Total Withdrawn by customer ID
             withdrawn_this_year = Witdrawal.objects.filter(account__id=customerID, date__year=current_date.year).aggregate(withdrawn_this_year=Sum('withdrawal_amount')).get('withdrawn_this_year') or 0
-
+            #Available Balance
+            available_balance = deposited_this_month - withdrawn_this_month
+            available_balance = available_balance - monthly_charges
             context = {
                 'withdrawn_this_month':withdrawn_this_month,
                 'withdrawn_this_year':withdrawn_this_year,
@@ -431,12 +449,14 @@ def account_statement(request, id):
                 'daily_deposits':daily_deposits,
                 'daily_withdrawals':daily_withdrawals,
                 'deposits':deposits,
+                'available_balance':available_balance,
                 'customer':customer,
                 'deposited_this_month':deposited_this_month,
                 'page_title':page_title,
                 'current_date':current_date,
                 'current_month_name':current_month_name,
                 'deposited_this_year':deposited_this_year,
+                'monthly_charges':monthly_charges,
 
             }
             return render(request, 'dashboard/statement.html', context)
