@@ -29,8 +29,8 @@
                         <table class="table bg-white table-borderless mb-1">
                             <tbody>
                               <tr>
-                                <th scope="row">Today's Date: </th>
-                                <td>{{ current_date }}</td>                                   
+                                <th scope="row">Today: </th>
+                                <td>{{ now }}</td>                                   
                               </tr> 
                               <tr>
                                 <th scope="row">Account Number: </th>
@@ -46,10 +46,21 @@
                               </tr>
                               <tr>
                                 <th scope="row"> {{current_month_name}} Service Charge:</th>
-                                <td style="font-family: san serif; color:red; font-size:1.2rem;"> <a class="btn btn-danger" href="">N{{saving_charge_amount}}</a> </td>                                   
+                                <td style="font-family: san serif; color:red; font-size:1.2rem;"> 
+                                  
+                                  {% if deposited_this_month == 0  %}
+                                  <a class="btn btn-success" href="">No Charges</a>
+                                  
+                                  {% else %}
+
+                                  <a class="btn btn-danger" href="">N{{saving_charge_amount}}</a> 
+
+                                  {% endif %}
+
+                                </td>                                   
                               </tr>
                               <tr>
-                                <th scope="row">Total Withdrawn: <b style="color:red;"> {{current_date.year}}</b> </th>
+                                <th scope="row">Total Withdrawn: <b style="color:red;"> {{now.year}}</b> </th>
                                 <td> <a class="btn btn-danger" href="">N{{ customer_withdrawals |intcomma }}</a> </td>                                   
                               </tr> 
                               <!-- <tr>
@@ -61,7 +72,7 @@
                               <tr>
                                 <th scope="row">Available Balance:</th>
                                 <td style="font-family: san serif; color:rgb(6, 82, 189); font-size:1.2rem;">
-                                  {% if deposited_this_month == 0  %}
+                                  {% if deposited_this_month == 0  %} 
 
                                   <a class="btn btn-danger" href="">No Deposit</a>
 

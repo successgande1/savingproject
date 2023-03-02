@@ -37,29 +37,29 @@
                                 <td style="font-family: san serif; color:rgb(6, 82, 189); font-size:1.2rem;">{{ customer.account_number}}</td>
                               </tr>  
                               <tr>
-                                <th scope="row">Total Deposited: <b style="color:red;">{{current_year}}</b> </th>
+                                <th scope="row">Deposited: <b style="color:red;">{{current_year}}</b> </th>
                                 <td> <a class="btn btn-success" href="">N{{ deposited_this_year |intcomma }}</a> </td>                                   
                               </tr> 
                               
                               <tr>
-                                <th scope="row">Total Deposited: <b style="color:red;">{{current_month_name}} {{current_year}}</b> </th>
+                                <th scope="row">Deposited: <b style="color:red;">{{current_month_name}} {{current_year}}</b> </th>
                                 <td> <a class="btn btn-success" href="">N{{ deposited_this_month |intcomma }}</a> </td>                                   
                               </tr> 
                               <tr>
-                                <th scope="row">Total Withdrawal: <b style="color:red;">{{current_month_name}} {{current_year}}</b> </th>
+                                <th scope="row">Withdrawn: <b style="color:red;">{{current_month_name}} {{current_year}}</b> </th>
                                 <td> <a class="btn btn-danger" href="">N{{ withdrawn_this_month |intcomma }}</a> </td>                                   
                               </tr>  
                               <tr>
-                                <th scope="row">Service Charge: <b style="color:red;">{{current_month_name}} {{current_year}}</b> </th>
+                                <th scope="row">{{current_month_name}} Charge: <b style="color:red;"></b> </th>
                                 <td> <a class="btn btn-success" href="">N{{ monthly_charge |intcomma }}</a> </td>                                   
                               </tr>  
                               <tr>
-                                <th scope="row">Account Balance:</th>
+                                <th scope="row">Balance:</th>
                                 <td style="font-family: san serif; color:red; font-size:1.2rem;"> 
-                                  {% if available_balance  %}
-                                  <a class="btn btn-primary" href="">N{{ available_balance |intcomma }}</a> 
+                                  {% if available_balance <= monthly_charge   %}
+                                  <a class="btn btn-danger" href="">N 0.00</a> 
                                   {% else %}
-                                  <a class="btn btn-danger" href="">N 0</a> 
+                                  <a class="btn btn-primary" href="">N{{ available_balance |intcomma }}</a> 
                                   {% endif %}
                                 </td>                                   
                               </tr>  

@@ -54,7 +54,7 @@ class ServiceChargeForm(forms.ModelForm):
 
 #Search Applicant form
 class SearchCustomerForm(forms.Form):
-    value = forms.CharField(label = 'Enter Name or Acct. Number', max_length=30)
+    value = forms.CharField(label = 'Enter 1st or Last Name or Acct. Number', max_length=30)
 
 #User Profile Update Form
 class ProfileUpdateForm(forms.ModelForm):

@@ -56,20 +56,43 @@
                 <hr>
                 <table class="table bg-white table-borderless">
                   <tbody>
-                      <tr>
-                          <th scope="row">Acct.: </th>
-                          <td>{{ acct }}</td>                                   
-                      </tr> 
+                      
 
                       <tr>
                         <th scope="row"> Date </th>
                         <td><b style="color:red; font-weight:700;">{{now}}</b> </td>                                   
-                      </tr>   
+                      </tr> 
+                      
+                      <tr>
+                        <th scope="row">TransactionID: </th>
+                        <td>{{ refID }}</td>                                   
+                      </tr> 
+
+                      <tr>
+                        <th scope="row">Acct. Surname: </th>
+                        <td>{{ profile.surname }}</td>                                   
+                      </tr> 
                     
                     <tr>
                       <th scope="row">Amount:</th>
                       <td><b style="font-weight: 700;">N{{amount | intcomma }}</b></td>                                   
-                    </tr>  
+                    </tr> 
+                    
+                    <tr>
+                      <th scope="row">Acct. Bal.:</th>
+                      <td><b style="font-weight: 700;">
+                        {% if available_balance <= 0 %}
+
+                        N0.00
+
+                        {% else %}
+
+                        N{{available_balance | intcomma }}
+
+                        {% endif %}
+                      
+                      </b></td>                                   
+                    </tr>
                      
 
                     <tr>

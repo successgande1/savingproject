@@ -36,6 +36,8 @@ import datetime
 import calendar
 from django.db.models.functions import TruncMonth
 from django.db.models.functions import ExtractYear, ExtractMonth
+import random
+import secrets
 
 
 #Create Customer Account Function View
@@ -126,7 +128,7 @@ def create_account(request):
             'count_users':count_users,
             'form':form,
             'userForm':userForm,
-            
+            'now':now,
             'customers':paged_list_customers,
             #'customers':customer,
             'searchForm':searchForm,
@@ -197,7 +199,7 @@ def update_profile(request, pk):
                 if profile_form.is_valid():
                     profile_form.save()
                     
-                    messages.success(request, 'Your Profile Updated Successfully')
+                    messages.success(request, f' {user_profile} Updated Successfully')
                     return redirect('user-register') 
             else:
                 
@@ -281,9 +283,9 @@ def customer_deposit(request, id):
         #Get Current Month Name from Calendar
         current_month_name = now.strftime('%B')
         
-        #Get Total Deposited this Month for the customer by ID
+        #Get Total Monthly Deposited of customer by ID
         deposited_this_month = Deposit.objects.filter(customer__id=id, date__year=now.year, date__month=now.month).aggregate(deposited_this_month=Sum('deposit_amount')).get('deposited_this_month') or 0
-        #Count Customers
+        #Get Customer Current Monthly Total Withdrawal by ID
         withdrawn_this_month = Witdrawal.objects.filter(account_id=id,  date__month=now.month).aggregate(withdrawn_this_month=Sum('withdrawal_amount')).get('withdrawn_this_month') or 0
         
         count_accounts = Account.objects.count()
@@ -306,7 +308,7 @@ def customer_deposit(request, id):
             customerID = customer.customer.id
             #Get Customer Profile by his ID
             profile = Profile.objects.get(customer=customer.customer.id)
-            
+            profile_surname = profile.surname
             
         except Account.DoesNotExist:
             messages.error(request, 'Customer Does Not Exist')
@@ -335,6 +337,8 @@ def customer_deposit(request, id):
                 if form.is_valid():
                     #Get  Deposit Details for form variable
                     amount = form.cleaned_data['deposit_amount']
+
+                    
                     
                     #Set Minimum Deposit
                     minimum_deposit = 100
@@ -342,8 +346,11 @@ def customer_deposit(request, id):
                     if amount < minimum_deposit:
                         messages.error(request, f'N{amount} is less than the Minimum Deposit of N{minimum_deposit}')
                     else:
+                        #Generate Transaction ID
+                        refID = "".join(str(random.randint(0, 10)) for _ in range(8))
+
                         #Add Customer Deposit
-                        credit_acct = Deposit.objects.create(customer=profile, acct=acct, staff=user, deposit_amount=amount)
+                        credit_acct = Deposit.objects.create(customer=profile, transID = refID, acct=acct, staff=user, deposit_amount=amount)
                         #Save the Customer Deposit
                         credit_acct.save()
                     
@@ -367,6 +374,8 @@ def customer_deposit(request, id):
                         'page_title':page_title,
                         'acct':acct,
                         'now':now,
+                        'refID':refID,
+                        'profile_surname':profile_surname,
                         'deposited_this_year':deposited_this_year,
                         'count_accounts':count_accounts,
                         'current_month_name':current_month_name,
@@ -453,7 +462,7 @@ def account_statement(request, id):
                 'customer':customer,
                 'deposited_this_month':deposited_this_month,
                 'page_title':page_title,
-                'current_date':current_date,
+                'now':current_date,
                 'current_month_name':current_month_name,
                 'deposited_this_year':deposited_this_year,
                 'monthly_charges':monthly_charges,
@@ -493,7 +502,7 @@ def deposit_slip(request, id):
             'count_accounts':count_accounts,
             'daily_deposits':daily_deposits,
             'daily_withdrawals':daily_withdrawals,
-            'date_today':date_today,
+            'now':date_today,
                     
                 })
         return render(request, 'dashboard/slip.html', context)
@@ -675,6 +684,8 @@ def witdrawal(request, id):
                     form = CustomerwithdrawalForm(request.POST or None)
                     
                     if form.is_valid():
+                        
+
                         #Withdrawal amount form value
                         amount = form.cleaned_data['withdrawal_amount']
 
@@ -689,10 +700,12 @@ def witdrawal(request, id):
                         
                             #messages.error(request, f'Sorry, You can NOT Empty Your Acct. at the Moment')
                         else:
+                            #Withdrawal ID
+                            refID = "".join(str(random.randint(0, 9)) for _ in range(7))
                             
                             
                             #Add Customer Deposit
-                            debit_acct = Witdrawal.objects.create(account=profile, staff=user, withdrawal_amount=amount)
+                            debit_acct = Witdrawal.objects.create(account=profile, transID = refID, staff=user, withdrawal_amount=amount)
                             #Save the Customer Deposit
                             debit_acct.save()
 
@@ -731,11 +744,14 @@ def witdrawal(request, id):
                             'now':now,
                             'amount':amount,
                             'acct':acct,
+                            'refID':refID,
+                            'profile':profile,
+                            'available_balance':available_balance,
                             'current_month_name':current_month_name,
                             })
                             
                             
-                            messages.success(request, f'N{amount} Withdrawn Successfully from {acct}. New Bal. N{available_balance}')
+                            messages.success(request, f'N{amount} Withdrawn Successfully from Acct. No:{acct}. New Bal. N{available_balance}')
                             
                             return render(request, 'dashboard/withdrawal_slip.html', context)
                     else:
@@ -753,7 +769,7 @@ def witdrawal(request, id):
                 'customer':customer, 
                 'deposited_this_year':deposited_this_year,
                 'customer_deposit':customer_deposit,
-                'current_date':current_date,
+                'now':current_date,
                 'count_accounts':count_accounts,
                 'daily_deposits':daily_deposits,
                 'daily_withdrawals':daily_withdrawals,

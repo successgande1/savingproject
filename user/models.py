@@ -1,6 +1,5 @@
 from tabnanny import verbose
 from django.db import models
-import uuid
 from django.urls import reverse
 from django.contrib.auth.models import User
 from PIL import Image
@@ -52,10 +51,13 @@ class Account(models.Model):
 
 class Deposit(models.Model): 
     customer = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True)
+    transID = models.CharField(max_length=12, null=True)
     acct = models.CharField(max_length=6, null=True)
     staff = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     deposit_amount = models.PositiveIntegerField(null=True) 
-    date = models.DateTimeField(auto_now_add=True)  
+    date = models.DateTimeField(auto_now_add=True) 
+
+    
  
     def get_absolute_url(self):
         return reverse('create_account', args=[self.id])
@@ -65,9 +67,11 @@ class Deposit(models.Model):
 
 class Witdrawal(models.Model): 
     account = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True)
+    transID = models.CharField(max_length=12, null=True)
     staff = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     withdrawal_amount = models.PositiveIntegerField(null=True)
     date = models.DateTimeField(auto_now_add=True)
+
 
     def __str__(self):
         return f'{self.account}- Withdrawn - {self.withdrawal_amount}'

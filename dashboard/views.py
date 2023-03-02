@@ -38,10 +38,15 @@ def index(request):
     count_users = all_users.count()
     #Count all Customer Accounts
     count_accounts = Account.objects.count()
+
+    #Get Day of today from current date and time
+    now = datetime.datetime.now()
+    
+   
      
 
-     #Retrieve all Desposits
-    deposits = Deposit.objects.all()
+    #Retrieve all Desposits
+    deposits = Deposit.objects.all() 
 
     #Retrieve all Withdrawals
     withdrawals = Witdrawal.objects.all()
@@ -64,6 +69,7 @@ def index(request):
     daily_withdrawals = Witdrawal.objects.filter(date__year=current_date.year, date__month=current_date.month, date__day=current_date.day).aggregate(daily_withdrawals=Sum('withdrawal_amount')).get('daily_withdrawals') or 0
     
     context = {
+        'now':now, 
         'daily_deposits':daily_deposits,
         'daily_withdrawals':daily_withdrawals,
         'count_deposits_today':count_deposits_today,

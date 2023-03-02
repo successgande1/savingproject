@@ -12,10 +12,10 @@ class ProfileAdmin(admin.ModelAdmin):
     list_display = ('customer', 'surname', 'othernames', 'gender', 'address', 'phone', 'image', )
 
 class DepositAdmin(admin.ModelAdmin):
-    list_display = ('customer', 'acct', 'staff', 'deposit_amount', 'date',)
+    list_display = ('customer', 'acct', 'staff', 'deposit_amount', 'transID', 'date',)
 
 class WitdrawalAdmin(admin.ModelAdmin):
-    list_display = ('account', 'staff', 'withdrawal_amount', 'date',)
+    list_display = ('account', 'staff', 'withdrawal_amount', 'transID', 'date',)
 
 class FeeAdmin(admin.ModelAdmin):
     list_display = ('description', 'charge_amount', 'due_day', 'staff', 'date',)

@@ -25,20 +25,25 @@
                 <hr>
                 <table class="table bg-white table-borderless">
                   <tbody>
+                    <tr>
+                      <th scope="row"> Deposited Date:</th>
+                      <td><b style="color:red; font-weight:700;">{{customer_deposit.date}}</b> </td>                                   
+                    </tr>
+                    <tr>
+                      <th scope="row">TransactionID: </th>
+                      <td> {{ customer_deposit.transID }} </td>                                   
+                  </tr> 
                       <tr>
                           <th scope="row">Acct.: </th>
                           <td>{{ customer_deposit.acct }}</td>                                   
                       </tr> 
 
                       <tr>
-                        <th scope="row">Acct. Name:</th>
-                        <td> {{customer_deposit.customer.surname}} {{customer_deposit.customer.othernames}}</td>                                   
+                        <th scope="row">Acct. Surname:</th>
+                        <td> {{customer_deposit.customer.surname}}</td>                                   
                       </tr> 
 
-                      <tr>
-                        <th scope="row"> Deposited Date:</th>
-                        <td><b style="color:red; font-weight:700;">{{customer_deposit.date}}</b> </td>                                   
-                      </tr>   
+                        
                     
                     <tr>
                       <th scope="row">Amount:</th>

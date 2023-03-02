@@ -39,7 +39,7 @@
                             <td>N{{ deposit.deposit_amount | intcomma }}</td>
                             <td>{{ deposit.date | naturaltime }}</td>
                             
-                            <th scope="row"><a class="btn btn-success btn-sm" href="">Slip</a></th>
+                            <th scope="row"><a class="btn btn-success btn-sm" href="{% url 'deposit-slip' deposit.id %}">Slip</a></th>
                           </tr>
                           {% endfor %}  
                                      
@@ -61,14 +61,19 @@
                           <td> <b style="color: blue; font-size:0.8rem;"> {{ customer.customer.profile.surname }} </b> </td>                                   
                       </tr> 
                       <tr>
-                        <th scope="row"> <b style="font-size: 0.8rem;">Deposited</b> <b style="color:rgb(60, 205, 12); font-size: 0.8rem;">{{current_date.year}}</b>:</th>
+                        <th scope="row"> <b style="font-size: 0.8rem;">Deposited</b> <b style="color:rgb(60, 205, 12); font-size: 0.8rem;">{{now.year}}</b>:</th>
                         <td style="font-family: san serif; color:rgb(179, 5, 51); font-size:1.2rem; font-weight:700;"> <a class="btn btn-success" href="">N{{deposited_this_year | intcomma }}</a> </td>                                   
                       </tr> 
 
                       <tr>
                         <th scope="row"> <b style="font-size:0.8rem;">Deposited</b> <b style="color:red; font-size: 0.8rem; ">{{current_month_name}}</b> </th>
                         <td style="font-family: san serif; color:rgb(6, 82, 189); font-size:1.2rem; font-weight:700;"> <a class="btn btn-primary" href="">N {{ deposited_this_month | intcomma }}</a>  </td>                                   
-                      </tr>  
+                      </tr> 
+                      
+                      <tr>
+                        <th scope="row"> <b style="font-size: 0.8rem;">Withdrawn:</b> <b style="color:red; font-size: 0.8rem;">{{now.year}}</b> </th>
+                        <td style="font-family: san serif; color:rgb(6, 82, 189); font-size:1.2rem;"> <a class="btn btn-secondary" href="">N{{withdrawn_this_year | intcomma}}</a> </td>                                   
+                      </tr> 
                       
                       <tr>
                         <th scope="row"> <b style="font-size: 0.8rem;">Withdrawn:</b> <b style="color:red; font-size: 0.8rem;">{{current_month_name}}</b> </th>
@@ -76,10 +81,7 @@
                       </tr> 
                     
                      
-                    <tr>
-                      <th scope="row"> <b style="font-size: 0.8rem;">Withdrawn:</b> <b style="color:red; font-size: 0.8rem;">{{current_date.year}}</b> </th>
-                      <td style="font-family: san serif; color:rgb(6, 82, 189); font-size:1.2rem;"> <a class="btn btn-secondary" href="">N{{withdrawn_this_year | intcomma}}</a> </td>                                   
-                    </tr> 
+                   
 
                     
                     <tr>
@@ -88,7 +90,19 @@
                     </tr>
                     <tr>
                       <th scope="row"> <b style="font-size: 0.8rem;">Avail. Balance:</b> <b style="color:red; font-size: 0.8rem;">{{current_month_name}}</b> </th>
-                      <td style="font-family: san serif; color:rgb(6, 82, 189); font-size:1.2rem;"> <a class="btn btn-danger" href="">N{{available_balance | intcomma}}</a> </td>                                   
+                      <td style="font-family: san serif; color:rgb(6, 82, 189); font-size:1.2rem;"> 
+                        
+                        {% if available_balance <= 0 %}
+
+                        <a class="btn btn-danger" href=""> N0</a> 
+
+                        {% else %}
+
+
+                        <a class="btn btn-success" href=""> N{{available_balance | intcomma}}</a> 
+                      
+                        {% endif %}
+                      </td>                                   
                     </tr>
 
                     <tr>

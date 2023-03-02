@@ -56,15 +56,24 @@
                 <hr>
                 <table class="table bg-white table-borderless">
                   <tbody>
+                    <tr>
+                      <th scope="row">Date </th>
+                      <td><b style="color:red; font-weight:700;">{{now}}</b> </td>                                   
+                    </tr> 
+                    <tr>
+                      <th scope="row">TransactionID: </th>
+                      <td>{{ refID }}</td>                                   
+                    </tr> 
+                    <tr>
+                      <th scope="row">Surname: </th>
+                      <td>{{ profile_surname}} </td>                                   
+                    </tr> 
                       <tr>
-                          <th scope="row">Acct.: </th>
+                          <th scope="row">Acct. No.: </th>
                           <td>{{ acct }}</td>                                   
                       </tr> 
 
-                      <tr>
-                        <th scope="row"> Date </th>
-                        <td><b style="color:red; font-weight:700;">{{now}}</b> </td>                                   
-                      </tr>   
+                       
                     
                     <tr>
                       <th scope="row">Amount:</th>
